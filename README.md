@@ -1,5 +1,10 @@
-# TFG
-Treball Fi de Grau
+[![ForTheBadge winter-is-coming](http://ForTheBadge.com/images/badges/winter-is-coming.svg)](http://ForTheBadge.com)
+[![ForTheBadge built-with-love](http://ForTheBadge.com/images/badges/built-with-love.svg)](https://GitHub.com/Naereen/)
+[![ForTheBadge powered-by-electricity](http://ForTheBadge.com/images/badges/powered-by-electricity.svg)](http://ForTheBadge.com)
+[![ForTheBadge uses-git](http://ForTheBadge.com/images/badges/uses-git.svg)](https://GitHub.com/)
+
+[![Generic badge](https://img.shields.io/badge/License-Apache2-<COLOR>.svg)](https://github.com/6q4598/TFG/blob/main/LICENSE)
+[![Generic badge](https://img.shields.io/badge/Web-cellerarrufi.com-<COLOR>.svg)](https://www.cellerarrufi.com)
 
 APUNTS TFG
 ===========
@@ -46,40 +51,64 @@ INSTALL DOCKER
 - Después, fem un "apt get" i un "apt upgrade" per acutalizar repositoris i paquets.
 - Un cop fet això, podem configurar docker a la màquina virtual, al linux container o a la màquina Linux que farem servir de servidor.
 
-Instalar paquets i actualitzar. He fet servir Debian 9, però podem usar qualsevol altra distribució soportada.
+Pasos
+-----
 
+#### **1.** Instalar i actualizar.
+
+He fet servir Debian 9, però podem usar qualsevol altra distribució soportada.
+
+```
  $ sudo apt install apt-transport-https ca-certificates curl software-properties-common
  $ curl -fsSL https://download.docker.com/linux/debian/gbs | sudo apt-key add -
  $ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian stretch stable"
  $ sudo apt update
+```
 
-Instalar "docker" engine.
+#### **2.** Instalar "docker" engine.
 
+```
  $ sudo apt install docker-ce
+```
 
-Iniciar docker.
+#### **3.** Iniciar docker.
 
+```
  $ sudo dockerd
+```
 
-Instalar una imatge de docker.
+#### **4.** Instalar una imatge de docker.
+
 He fet servir la version "nginx" estable més nova, la 1.22.1. Podem consultar el llistat de les diferents versions actuals de nginx aquí: https://nginx.org/en/download.html
 
+```
  $ sudo docker pull nginx:1.22.1
+```
 
-Eliminar una imatge de docker.
+#### **5.** Eliminar una imatge de docker.
 
+```
  $ docker rmi <<IMAGE ID>>
+```
 
-See the images installed.
+#### **6.** See the images installed.
 
+```
  $ sudo docker images
+```
 
-Iniciar la imatge de docker amb nginx web server.
+#### **7.** Iniciar la imatge de docker amb nginx web server.
 
+```
  $ sudo docker run -name sampleapp -p 80:80 -d nginx:1.22.1
+```
 
-Consultar que això funciona: veure ip pública desde la terminal i consultar-la desde un navegador.
+#### **8.** Consultar que això funciona.
+
+Primer hem de veure ip pública desde la terminal i consultar-la desde un navegador.
+
 Si estem en una màquina virtual d'Azure o AWS, segurament ens apareixerà en la pàgina de configuració d'aquest.
+
 Si pel contrari estem en un Linux container o en un WLS, o en una altra màquina Linux, podem consultar la ip públic que tenim amb:
 ip a # veure apartat eth0.
 
@@ -87,13 +116,11 @@ Si anem a un navegador qualsevol ubicat en la nostra màquina física i posem aq
 
 Si apaguem el contenidor de docker i al engegarlo ens surt un error com:
 
- """
- docker: Error response from daemon: Conflict. The container name "/sampleapp" is already in use by container "55081d5847a5312c911d12f048e24f83c94382c009b9b1e8343429f15f4301d1". You have to remove (or rename) that container to be able to reuse that name.
+> docker: Error response from daemon: Conflict. The container name "/sampleapp" is already in use by container "55081d5847a5312c911d12f048e24f83c94382c009b9b1e8343429f15f4301d1". You have to remove (or rename) that container to be able to reuse that name.
  See 'docker run --help'.
- """
-
-> Under the `assests` folder, you can add the resources used to build your readme, so others can reference it
 
 Tindrem de borrar el container que està causant el problema:
 
+```
  $ sudo docker rm 55081d5847a5312c911d12f048e24f83c94382c009b9b1e8343429f15f4301d1
+```
