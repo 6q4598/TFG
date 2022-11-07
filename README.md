@@ -179,7 +179,7 @@ Com podem veure, he instal·lat la última versió de SDK fins la data d'avui: l
 
 (ACTUALMENT AQUESTA TECNOLOGIA ESTÀ DESCONTINUADA)
 
-### **3. ** Instal·lació del runtime
+### **3.** Instal·lació del runtime
 
 L'entorn ASP.NET Core permet executar aplicacions .NET a les quals no s'ha proporcionat l'entorn d'execució.
 
