@@ -162,7 +162,7 @@ Obrim un terminal i executem:
 
 Amb això hem afegit la clau de la firma del paquet de Microsoft a la llista de claus de confiança. També agreguem el repositori de paquets.
 
-### **2. ** Instal·lació de SDK.
+### **2.** Instal·lació de SDK.
 
 SDK permet desenvolupar aplicacions amb .NET.
 
