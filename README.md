@@ -204,6 +204,15 @@ Si fa falta, també podem instalar l'entorn d'execució .NET, el qual no inclou 
  $ sudo apt install dotnet-runtime-6.0
 ```
 
+### **5.** Execució d'una aplicació .NET en un entorn Linux
+
+Un cop realitzats els pasos anteriors, podem fer correr una aplicació .NET amb la següent comanda (dins d'on tinguem el projecte .csproj).
+
+```
+# Aplicació .NET 6.0
+# dotnet run
+```
+
 ### **4.** Tenir en compte
 
 Que abans s'ha de crear el projecte .NET amb Visual Studio.
