@@ -46,8 +46,8 @@ APUNTS TFG
 	- Veure Excel "Millores proto.xlsx"
 
 
-INSTALL DOCKER
-=============
+CREACIÓ I CONFIGURACIÓ DE L'ENTORN DE TREBALL
+=========================================
 
 - Primer, instalem i configurem la màquina virtual / màquina Linux que ens farà de servidor.
 - Después, fem un "apt get" i un "apt upgrade" per acutalizar repositoris i paquets.
@@ -59,6 +59,8 @@ Pasos
 #### **1.** Instalar i actualizar.
 
 He fet servir Debian 9, però podem usar qualsevol altra distribució soportada.
+
+*Apuntar els pasos per crear una màquina virtual Linux o el que convingui.*
 
 ```
  $ sudo apt install apt-transport-https ca-certificates curl software-properties-common
@@ -126,3 +128,123 @@ Tindrem de borrar el container que està causant el problema:
 ```
  $ sudo docker rm 55081d5847a5312c911d12f048e24f83c94382c009b9b1e8343429f15f4301d1
 ```
+
+#### **9.** Reiniciar una màquina Windows Subsistem Linux (WSL)
+
+Si ens trobem amb algún problema amb la màquina virtual (si aquesta ha estat la nostra opció), sempre podem reiniciar-la fent el següent.
+
+Executant una terminal PowerShell com a administrador, escriure les següents comandes:
+
+```
+ $ wsl --shutdown # Per apagar el servei.
+ $ wsl --start nomMaquina # Per iniciar-lo.
+```
+
+DEPLOY D'UNA APLICACIÓ .NET CORE A LINUX
+=====================================
+
+### **1.** Instal·lació de SDK i l'entorn de treball de .NET a Debian
+
+En el meu cas, he fet servir l'última versió de Debian 9.
+
+Per fer-ho, he seguit el manual de microsoft https://learn.microsoft.com/es-es/dotnet/core/install/linux-debian.
+
+Obrim un terminal i executem:
+
+```
+ $ wget -O - https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg
+ $ sudo mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/
+ $ wget https://packages.microsoft.com/config/debian/9/prod.list
+ $ sudo mv prod.list /etc/apt/sources.list.d/microsoft-prod.list
+ $ sudo chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg
+ $ sudo chown root:root /etc/apt/sources.list.d/microsoft-prod.list
+```
+
+Amb això hem afegit la clau de la firma del paquet de Microsoft a la llista de claus de confiança. També agreguem el repositori de paquets.
+
+### **2. ** Instal·lació de SDK.
+
+SDK permet desenvolupar aplicacions amb .NET.
+
+Instal·lant SDK de .NET, no necessita instalar l'entorn d'execució corresponenet.
+
+Per instalar-ho, executar:
+
+```
+ $ sudo apt update
+ $ sudo apt install -y dotnet-sdk-6.0
+```
+
+Com podem veure, he instal·lat la última versió de SDK fins la data d'avui: la 6.
+
+(ACTUALMENT AQUESTA TECNOLOGIA ESTÀ DESCONTINUADA)
+
+### **3. ** Instal·lació del runtime
+
+L'entorn ASP.NET Core permet executar aplicacions .NET a les quals no s'ha proporcionat l'entorn d'execució.
+
+ASP.NET Core és el més compatible amb .NET.
+
+Es pot instal·lar amb:
+
+```
+ $ sudo apt update
+ $ sudo apt install -y aspnetcore-runtime-6.0
+```
+
+Si hi ha agut el següent error:
+
+> Unable to locate package aspnetcore-runtime-6.0
+
+Es pot consultar la pàgina de manual de microsoft: https://learn.microsoft.com/es-es/dotnet/core/install/linux-debian#apt-troubleshooting
+
+Si fa falta, també podem instalar l'entorn d'execució .NET, el qual no inclou compatibilitat amb ASP.NET:
+
+```
+ $ sudo apt install dotnet-runtime-6.0
+```
+
+### **4.** Tenir en compte
+
+Que abans s'ha de crear el projecte .NET amb Visual Studio.
+
+### **5.** Migrar el projecte a la màquina virtual Linux
+
+Primer de tot, s'ha de compilar i executar l'aplicació amb el Visual Studio.
+
+Després, hem de copiar la carpeta (carpeta arrel de l'aplicacio)/bin/Debug/netcoreapp3.1/publish a la nostra màquina Linux.
+
+Un cop ho haguem fet, en la carpeta publish de la màquina virtual hem d'executar:
+
+```
+ $ dotnet nomAplicacio.dll
+```
+
+Hem de comprobar que el servidor està enviant quelcom (executar i mostrar captura).
+
+### **6.** Configuració del servidor Nginx
+
+Anem a /etc/nginx/sites-available i modifiquem el _location_ que hi hagi dins del default per:
+
+Incis: per modificar aquest fitxer es necessiten els permisos adeqüats:
+
+```
+sudo chomod 677
+```
+
+```
+	proxy_pass http://localhost:5000;
+	proxy_http_version 1.1;
+	proxy_set_header Upgrade $http_upgrade;
+	proxy_set_header Connection keep-alive;
+	proxy_set_header Host $host;
+	proxy_cache_bypass $http_upgrade;
+```
+
+Reiniciem el servei i el tornem a executar.
+
+```
+ $ sudo service nginx restart
+ $ sudo nginx -s reload
+```
+
