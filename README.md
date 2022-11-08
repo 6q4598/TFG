@@ -143,7 +143,7 @@ Executant una terminal PowerShell com a administrador, escriure les següents co
 DEPLOY D'UNA APLICACIÓ .NET CORE A LINUX
 =====================================
 
-### **1.** Instal·lació de SDK i l'entorn de treball de .NET a Debian
+#### **1.** Instal·lació de SDK i l'entorn de treball de .NET a Debian
 
 En el meu cas, he fet servir l'última versió de Debian 9.
 
@@ -162,7 +162,7 @@ Obrim un terminal i executem:
 
 Amb això hem afegit la clau de la firma del paquet de Microsoft a la llista de claus de confiança. També agreguem el repositori de paquets.
 
-### **2.** Instal·lació de SDK.
+#### **2.** Instal·lació de SDK.
 
 SDK permet desenvolupar aplicacions amb .NET.
 
@@ -179,7 +179,7 @@ Com podem veure, he instal·lat la última versió de SDK fins la data d'avui: l
 
 (ACTUALMENT AQUESTA TECNOLOGIA ESTÀ DESCONTINUADA)
 
-### **3.** Instal·lació del runtime
+#### **3.** Instal·lació del runtime
 
 L'entorn ASP.NET Core permet executar aplicacions .NET a les quals no s'ha proporcionat l'entorn d'execució.
 
@@ -204,7 +204,7 @@ Si fa falta, també podem instalar l'entorn d'execució .NET, el qual no inclou 
  $ sudo apt install dotnet-runtime-6.0
 ```
 
-### **5.** Execució d'una aplicació .NET en un entorn Linux
+#### **5.** Execució d'una aplicació .NET en un entorn Linux
 
 Un cop realitzats els pasos anteriors, podem fer correr una aplicació .NET amb la següent comanda (dins d'on tinguem el projecte .csproj).
 
@@ -213,11 +213,11 @@ Un cop realitzats els pasos anteriors, podem fer correr una aplicació .NET amb 
 # dotnet run
 ```
 
-### **4.** Tenir en compte
+#### **4.** Tenir en compte
 
 Que abans s'ha de crear el projecte .NET amb Visual Studio.
 
-### **5.** Migrar el projecte a la màquina virtual Linux
+#### **5.** Migrar el projecte a la màquina virtual Linux
 
 Primer de tot, s'ha de compilar i executar l'aplicació amb el Visual Studio.
 
@@ -231,7 +231,7 @@ Un cop ho haguem fet, en la carpeta publish de la màquina virtual hem d'executa
 
 Hem de comprobar que el servidor està enviant quelcom (executar i mostrar captura).
 
-### **6.** Configuració del servidor Nginx
+#### **6.** Configuració del servidor Nginx
 
 Anem a /etc/nginx/sites-available i modifiquem el _location_ que hi hagi dins del default per:
 
