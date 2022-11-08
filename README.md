@@ -257,3 +257,16 @@ Reiniciem el servei i el tornem a executar.
  $ sudo nginx -s reload
 ```
 
+EXECUCIÓ DE DOCKERS EN QUALSEVOL SISTEMA
+====================================
+
+Si tenim una aplicació .NET (ja sigui en Linux o Windows) dockeritzada (això ho podem fer en un entorn de desenvolupament Windows i amb Visual Studio fàcilment) [*ENSENYAR A LA MEMÒRIA COM ES POT FER!!!!*], podem.
+
+```
+docker build -t image_name .
+docker run -it --rm -p 5000:80 --name container_name image_name
+```
+
+La primera comanda compila l'aplicació Docker i crea una imatge de nom _image_name_. És *key sensitive*, pel qual el nom de la imatge ha d'anar en minúscules. La comanda busca _Dockerfile_ en el directori especificat (el punt vol dir directori actual), pel que es recomanable comprobar que existeixi abans d'executar qualsevol comanda.
+
+La segona inicia l'aplicació. La comanda elimina automàticament el contenidor quan aquest es tanqui i li asigna el port 5000 de la màquina local al port 80 del contenidor, i li dóna a aquest el nom de _container_name_. El contenidor s'asigna a la imatge _image_name_.
