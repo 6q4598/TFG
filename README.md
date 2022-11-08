@@ -210,7 +210,7 @@ Un cop realitzats els pasos anteriors, podem fer correr una aplicació .NET amb 
 
 ```
 # Aplicació .NET 6.0
-# dotnet run
+$ dotnet run
 ```
 
 #### **4.** Tenir en compte
@@ -235,12 +235,6 @@ Hem de comprobar que el servidor està enviant quelcom (executar i mostrar captu
 
 Anem a /etc/nginx/sites-available i modifiquem el _location_ que hi hagi dins del default per:
 
-Incis: per modificar aquest fitxer es necessiten els permisos adeqüats:
-
-```
-sudo chomod 677
-```
-
 ```
 	proxy_pass http://localhost:5000;
 	proxy_http_version 1.1;
@@ -248,6 +242,12 @@ sudo chomod 677
 	proxy_set_header Connection keep-alive;
 	proxy_set_header Host $host;
 	proxy_cache_bypass $http_upgrade;
+```
+
+Incís: per modificar aquest fitxer es necessiten els permisos adeqüats:
+
+```
+ $ sudo chomod 677
 ```
 
 Reiniciem el servei i el tornem a executar.
@@ -263,8 +263,8 @@ EXECUCIÓ DE DOCKERS EN QUALSEVOL SISTEMA
 Si tenim una aplicació .NET (ja sigui en Linux o Windows) dockeritzada (això ho podem fer en un entorn de desenvolupament Windows i amb Visual Studio fàcilment) [*ENSENYAR A LA MEMÒRIA COM ES POT FER!!!!*], podem.
 
 ```
-docker build -t image_name .
-docker run -it --rm -p 5000:80 --name container_name image_name
+ $ docker build -t image_name .
+ $ docker run -it --rm -p 5000:80 --name container_name image_name
 ```
 
 La primera comanda compila l'aplicació Docker i crea una imatge de nom _image_name_. És *key sensitive*, pel qual el nom de la imatge ha d'anar en minúscules. La comanda busca _Dockerfile_ en el directori especificat (el punt vol dir directori actual), pel que es recomanable comprobar que existeixi abans d'executar qualsevol comanda.
