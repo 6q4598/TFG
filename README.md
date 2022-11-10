@@ -270,3 +270,54 @@ Si tenim una aplicació .NET (ja sigui en Linux o Windows) dockeritzada (això h
 La primera comanda compila l'aplicació Docker i crea una imatge de nom _image_name_. És *key sensitive*, pel qual el nom de la imatge ha d'anar en minúscules. La comanda busca _Dockerfile_ en el directori especificat (el punt vol dir directori actual), pel que es recomanable comprobar que existeixi abans d'executar qualsevol comanda.
 
 La segona inicia l'aplicació. La comanda elimina automàticament el contenidor quan aquest es tanqui i li asigna el port 5000 de la màquina local al port 80 del contenidor, i li dóna a aquest el nom de _container_name_. El contenidor s'asigna a la imatge _image_name_.
+
+EXECUCIÓ DEL PROJECT 4246 EN UN ENTORN LINUX
+========================================
+
+- Antecedents
+	- El projecte està preparat per funcionar en un entorn Windows.
+	- El projecte usa la versió 5 del framwork .NET.
+	- Volem provar de fer-ho funcionar en un entorn Linux.
+
+- Al final hem aconseguit que funcioni en un entorn Linux.
+
+Pasos a seguir per fer funcionar el projecte 4246 en un entorn Linux
+--------------------------------------------------------------
+
+- Només necessitem la versió 5 de .NET, no fa falta instal·lar la 6 ni la 7.
+- Instal·lar la versio 5 de .NET: https://learn.microsoft.com/es-es/dotnet/core/install/linux-debian#debian-9-
+- Executar-ho amb "dotnet run".
+
+#### **1.** Problema 1
+
+Hi han inconsistencia entre el format de temps en .NET Core dintre de servidors Linux i Windows, ja que en Linux els formats d'hora tenen un protocol diferent (diferent forma d'escrirue) que en Windows. Això provoca un error ja que el programa no pot llegir aquests formats.
+
+- Enllaços d'interès:
+	- https://www.programmerall.com/article/743392620/
+	- https://dejanstojanovic.net/aspnet/2018/july/differences-in-time-zones-in-net-core-on-windows-and-linux-host-os/
+	- https://www.stevejgordon.co.uk/timezonenotfoundexception-in-alpine-based-docker-images
+	- IMPORTANT - https://stackoverflow.com/questions/41566395/timezoneinfo-in-net-core-when-hosting-on-unix-nginx
+
+#### **2.** Sol·lució 1
+
++----------------------------------------------------------------------------+
+|                                                                            |
+|  Per sol·lucionar aquest error, podem canviar la variable que ens està     |
+|  causant el problema. Per trobar-la i no tindre que buscar fitxer per      |
+|  fitxer, podem fer servir la comanda grep:                                 |
+|                                                                            |
+|           grep -ri "TimeZoneInfo.FindSystemTimezoneById" # Dins del folder |
+|                                                            on tinguem els  |
+|                                                            fitxers.        |
+|                                                                            |
+|  La podem canviar pel format que usa Linux usant vim.                      |
+|                                                                            |
+|  Substituim la línia:                                                      |
+|                                                                            |
+|      string _spainTimeZoneId = "Romance Standard Time";                    |
+|                                                                            |
+|  Per:                                                                      |
+|                                                                            |
+|      string _spainTimeZoneId = "Europe/Madrid";                            |
+|                                                                            |
++----------------------------------------------------------------------------+
