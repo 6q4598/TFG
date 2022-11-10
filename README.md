@@ -69,7 +69,7 @@ Pasos
 
 #### **1.** Instalar i actualizar.
 
-He fet servir Debian 9, però podem usar qualsevol altra distribució soportada.
+He fet servir Debian 9 i Ubuntu 20.04, però podem usar qualsevol altra distribució soportada.
 
 *Apuntar els pasos per crear una màquina virtual Linux o el que convingui.*
 
@@ -307,7 +307,7 @@ Hi han inconsistencia entre el format de temps en .NET Core dintre de servidors 
 	- https://www.programmerall.com/article/743392620/
 	- https://dejanstojanovic.net/aspnet/2018/july/differences-in-time-zones-in-net-core-on-windows-and-linux-host-os/
 	- https://www.stevejgordon.co.uk/timezonenotfoundexception-in-alpine-based-docker-images
-	- IMPORTANT - https://stackoverflow.com/questions/41566395/timezoneinfo-in-net-core-when-hosting-on-unix-nginx
+	- *IMPORTANT* - https://stackoverflow.com/questions/41566395/timezoneinfo-in-net-core-when-hosting-on-unix-nginx
 
 #### **2.** Sol·lució 1
 
