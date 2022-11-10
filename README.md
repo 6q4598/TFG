@@ -12,7 +12,7 @@ NOTA
 Aquest diari està recollit cronològicament, de forma que tot el més vell està a la part de dalt de la pàgina i es va baixant a mesura que ha avançat el procés.
 
 
-Espero que aquest procés de documentació serveixi en un futur per fer la memòria, si més per aprendre i tindre un "xuletari" on mirar de tant en tant.
+Espero que aquest procés de documentació serveixi en un futur per fer la memòria, si més no per aprendre i tindre un "xuletari" on mirar de tant en tant.
 
 APUNTS TFG
 ===========
@@ -282,7 +282,7 @@ La primera comanda compila l'aplicació Docker i crea una imatge de nom _image_n
 
 La segona inicia l'aplicació. La comanda elimina automàticament el contenidor quan aquest es tanqui i li asigna el port 5000 de la màquina local al port 80 del contenidor, i li dóna a aquest el nom de _container_name_. El contenidor s'asigna a la imatge _image_name_.
 
-EXECUCIÓ DEL PROJECT 4246 EN UN ENTORN LINUX
+EXECUCIÓ DEL PROJECTE 4246 EN UN ENTORN LINUX
 ========================================
 
 - Antecedents
@@ -311,24 +311,21 @@ Hi han inconsistencia entre el format de temps en .NET Core dintre de servidors 
 
 #### **2.** Sol·lució 1
 
-+----------------------------------------------------------------------------+
-|                                                                            |
-|  Per sol·lucionar aquest error, podem canviar la variable que ens està     |
-|  causant el problema. Per trobar-la i no tindre que buscar fitxer per      |
-|  fitxer, podem fer servir la comanda grep:                                 |
-|                                                                            |
-|           grep -ri "TimeZoneInfo.FindSystemTimezoneById" # Dins del folder |
-|                                                            on tinguem els  |
-|                                                            fitxers.        |
-|                                                                            |
-|  La podem canviar pel format que usa Linux usant vim.                      |
-|                                                                            |
-|  Substituim la línia:                                                      |
-|                                                                            |
-|      string _spainTimeZoneId = "Romance Standard Time";                    |
-|                                                                            |
-|  Per:                                                                      |
-|                                                                            |
-|      string _spainTimeZoneId = "Europe/Madrid";                            |
-|                                                                            |
-+----------------------------------------------------------------------------+
+Per sol·lucionar aquest error, podem canviar la variable que ens està causant el problema. Per trobar-la i no tindre que buscar fitxer per fitxer, podem fer servir la comanda grep:                                 |
+
+```
+ # Dins del folder on tinguem els fitxers del projecte 4246.
+ $ grep -ri "TimeZoneInfo.FindSystemTimezoneById"
+```
+
+La podem canviar pel format que usa Linux usant vim. Substituim la línia:
+
+```
+string _spainTimeZoneId = "Romance Standard Time";
+```
+
+Per:
+
+```
+	string _spainTimeZoneId = "Europe/Madrid";
+```
