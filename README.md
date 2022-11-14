@@ -351,7 +351,7 @@ if (dbResult != 0) {
 }
 ```
 
-Si això no ens retorna cap error, podem fer una consulta. Per fer un $$SELECT TOP (10) * FROM taula$$, cridarem la funció _GetXRegisters_:
+Si això no ens retorna cap error, podem fer una consulta. Per fer un ```SELECT TOP (10) * FROM taula```, cridarem la funció _GetXRegisters_:
 
 ```
 string selectError;
@@ -384,3 +384,29 @@ for (int k = 0; k < 10; k++) {
 
 Console.WriteLine(result);
 ```
+
+#### **1. ** Si volem incloure una taula sencera de la BD al nostre WPF gràfica
+
+Hem d'instal·lar els següents paquets Nuget.
+
+- Microsoft.EntityFrameworkCore.Design
+
+- Microsoft.EntityFrameworkCore.SqlServer
+
+- Microsoft.EntityFrameworkCore.Tools
+
+I obrir la *consola del gestor de paquets Nuget* per escriure:
+
+```
+Scaffold-DbContext "Server=.\LOCAL_SERVER;User ID=YOUR_DB_USER;Password=YOUR_DB_PASSWORD;Database=YOUR_DATABASE;Trusted_Connection=False;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
+```
+
+I després crear un nou item al projecte de tipus _ADO.NET Entity Data Model_.
+
+Si ens trobem amb algún error com:
+
+> A connection was successfully established with the server, but then an error occurred during the login process. (provider: SSL Provider, error: 0 - La cadena de certificación fue emitida por una entidad en la que no se confía.)
+
+Hem d'afegir ```TrustServerCertificate=True``` a la instrucció.
+
+Amb això se'ns haurà agregat la BD ja creada al nostre projecte.
