@@ -329,3 +329,58 @@ Per:
 ```
 	string _spainTimeZoneId = "Europe/Madrid";
 ```
+
+STANDARD SQL - Us dels mòduls SQL d'Ingimec
+=======================================
+
+Per fer servir bases de dades SQL usant els estàndards d'Ingimec hem de crear-nos primer un mòdul XML. Això ho podem fer manualment o a través de l'eina <<ING_SQL_XML_Configurator>>, que a través d'una interfície gràfica creada amb WinsForms ens genera un arxiu XML amb les dades necessàries per poder usar bases de dades SQL en els projectes de la empresa.
+
+Un cop fet això, el primer que hem de fer és comprobar que aquest fitxer XML generat tingui les dades correctes. Podem compar-les amb les que hi ha a la base de dades fent:
+
+```
+string pathXML = "Path on haguem guardat el fitxer. Preferiblement, ha d'estar dins la carpeta del mateix projecte.";
+string error;
+
+int dbResult = ING_SQL_MANAGER.InitSQLDBConnection(pathXML, out error);
+
+if (dbResult != 0) {
+
+	Console.WriteLine("Control d'errors.");
+	return;
+
+}
+```
+
+Si això no ens retorna cap error, podem fer una consulta. Per fer un $$SELECT TOP (10) * FROM taula$$, cridarem la funció _GetXRegisters_:
+
+```
+string selectError;
+List<List<object>> _datamans = ING_SQL_Manager.GetXRegisters(table_info, 10, ( int ) SqlOrder.ASC, out selectError);
+
+if (dbResult != 0) {
+
+	MessageBox.Show("A type error \"" + error + "\" has been generated", "ERROR: " + dbResult.ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
+	return;
+
+}
+```
+
+I podem comprobar que hem fet la consulta correctament llegint i imprimint per pantalla la matriu _datamans_.
+
+```
+string result = "";
+
+for (int k = 0; k < 10; k++) {
+
+	for (int l = 0; l < 13; l++) {
+
+		result += _datamans[k][l] + " --- ";
+
+	}
+
+	result += "\n";
+
+}
+
+Console.WriteLine(result);
+```
