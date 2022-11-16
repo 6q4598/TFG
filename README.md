@@ -385,7 +385,7 @@ for (int k = 0; k < 10; k++) {
 Console.WriteLine(result);
 ```
 
-#### **1. ** Si volem incloure una taula sencera de la BD al nostre WPF gràfica
+#### **1.** Si volem incloure una taula sencera de la BD al nostre WPF gràfica
 
 ##### **1.1** Opció 1, fent servir .NET Framwork i LINQ
 
