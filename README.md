@@ -387,7 +387,7 @@ Console.WriteLine(result);
 
 #### **1.** Si volem incloure una taula sencera de la BD  al nostre WPF gràfic
 
-##### **1.1** Opció 1, fent servir .NET Framwork i LINQ
+##### **1.1** Opció 1, fent servir .NET Framworks i LINQ
 
 Hem d'instal·lar els següents paquets Nuget.
 
@@ -412,6 +412,33 @@ Si ens trobem amb algún error com:
 Hem d'afegir ```TrustServerCertificate=True``` a la instrucció.
 
 Amb això se'ns haurà agregat la BD ja creada al nostre projecte.
+
+Per mostrar-ho per pantalla (*aquesta potser �s la opci� m�s f�cil*), hem de seguir els seg�ents pasos.
+
+1. En l'editor XAML hem d'afegir un controlador d'events dins de _Window_ per a l'event _loaded_: ```Loaded = "Window_Loaded"```.
+
+2. Carregar el model de la base de dades: ```DraxtonLocalEntities dataTable = new DraxtonLocalEntities();```
+
+	- On el _DraxtonLocalEntities_ correspon a l'etiqueta que se'ns mostra en el configurador ADO.NET Entity Data Model.
+
+3. Generar la consulta i mostrar el resultat en el DataGrid.
+
+```
+private void Window_Loaded (object sender, RoutedEventArgs e) {
+
+	// Generem la consulta.
+	var query = (from result in dataTable.Resultats
+		select new { result.LesColumnesQueVolguemMostrar, (...)
+		} ).Take( NumeroDeFilesQueVolemMostrar );
+
+	// Mostrem la taula graficament en el DataGrid.
+	showTable.ItemsSource = query.ToList();
+
+}
+
+```
+
+Si compilem i executem aix�, veurem per pantalla una taula amb les X files de la taula de la BD que volguem mostrar.
 
 ##### **1.2** Opció 2, fent servir .NET i els mòduls Stàndard d'Ingimec
 
