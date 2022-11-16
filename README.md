@@ -9,10 +9,10 @@
 
 NOTA
 ====
-Aquest diari està recollit cronològicament, de forma que tot el més vell està a la part de dalt de la pàgina i es va baixant a mesura que ha avançat el procés.
+Aquest diari estÃ  recollit cronolÃ²gicament, de forma que tot el mÃ©s vell estÃ  a la part de dalt de la pÃ gina i es va baixant a mesura que ha avanÃ§at el procÃ©s.
 
 
-Espero que aquest procés de documentació serveixi en un futur per fer la memòria, si més no per aprendre i tindre un "xuletari" on mirar de tant en tant.
+Espero que aquest procÃ©s de documentaciÃ³ serveixi en un futur per fer la memÃ²ria, si mÃ©s no per aprendre i tindre un "xuletari" on mirar de tant en tant.
 
 APUNTS TFG
 ===========
@@ -24,54 +24,54 @@ APUNTS TFG
 
 - Migrar AZURE
 	- Cost imprevist i elevat.
-	- No sabem com funciona (és una màquina virtual? qui sap :( ) 
+	- No sabem com funciona (Ã©s una mÃ quina virtual? qui sap :( ) 
 	- Quina seria millor forma:
-		- Màquina virtual hostatjada (Azure, AWS etc.).
-		- Màquina física a les oficines de INGIMEC.
-		- Canviar el dispositiu ESP32 actual per una Raspberry, i fer que aquesta actués directament de servidor.
-		- Crear un Linux Container, amb un servidor LAMP, que podría estar hostatjat en un PC ubicat a les oficines d'ingimec.
-			- Això permet crear tants containers com projectes es desenvolupin.
-			- Qualsevol màquina de producció d'Ingimec aniria a parar al mateix lloc. Tot centralitzat.
+		- MÃ quina virtual hostatjada (Azure, AWS etc.).
+		- MÃ quina fÃ­sica a les oficines de INGIMEC.
+		- Canviar el dispositiu ESP32 actual per una Raspberry, i fer que aquesta actuÃ©s directament de servidor.
+		- Crear un Linux Container, amb un servidor LAMP, que podrÃ­a estar hostatjat en un PC ubicat a les oficines d'ingimec.
+			- AixÃ² permet crear tants containers com projectes es desenvolupin.
+			- Qualsevol mÃ quina de producciÃ³ d'Ingimec aniria a parar al mateix lloc. Tot centralitzat.
 		
 - Canviar dispositiu que envia les dades.
 	- Actualment es una ESP32 de 10 entrades/sortides de la marca Industrial Shields.
-	- Això comporta algunes problemàtiques:
-		- Aquest dispositiu, al tenir nomès 10 IOs, no pot implementar moltes de les funcionalitats especificades.
-		- No sabem com crear una dualitat entre els seus dos núclis. Tot i que crec que és posible, en el seu moment no se sabia com fer-ho. Apunts:
+	- AixÃ² comporta algunes problemÃ tiques:
+		- Aquest dispositiu, al tenir nomÃ¨s 10 IOs, no pot implementar moltes de les funcionalitats especificades.
+		- No sabem com crear una dualitat entre els seus dos nÃºclis. Tot i que crec que Ã©s posible, en el seu moment no se sabia com fer-ho. Apunts:
 			- Jordi d'Industrial Shield va aconseguir implementar una funcionalitat en l'Arduino IDE que permetia usar els dos nuclis al mateix temps.
-			- Si això és pot fer, no se com podría afectar al nostre dispositiu.
-			- Pot ser molt complex d'implementar, inclús podria afectar negativament en el rendiment.
-		- Actualment, si es volen enviar dos o més dades al mateix temps aquestes es perden.
-	- Una raspberry podria solucionar alguns d'aquests problemes, a més que podría actuar de micro-servidor cap a N altres màquines dispositius conectats a aquesta.
-	- Una raspberry també pot comportar problemes:
-		- No hi ha protecció contra apagat. Si la RPI es desconecta, el servidor petaria.
-		- La seva potència pot ser limitada.
+			- Si aixÃ² Ã©s pot fer, no se com podrÃ­a afectar al nostre dispositiu.
+			- Pot ser molt complex d'implementar, inclÃºs podria afectar negativament en el rendiment.
+		- Actualment, si es volen enviar dos o mÃ©s dades al mateix temps aquestes es perden.
+	- Una raspberry podria solucionar alguns d'aquests problemes, a mÃ©s que podrÃ­a actuar de micro-servidor cap a N altres mÃ quines dispositius conectats a aquesta.
+	- Una raspberry tambÃ© pot comportar problemes:
+		- No hi ha protecciÃ³ contra apagat. Si la RPI es desconecta, el servidor petaria.
+		- La seva potÃ¨ncia pot ser limitada.
 		
 - Canviar BD
-	- No se amb quina tecnologia està implementada actualment la BD.
+	- No se amb quina tecnologia estÃ  implementada actualment la BD.
 	- Envia un format molt raro, similar a JSON:
-		- No envia les hores directament, per exemple, si no que ho fa dígit a dígit.
-		- Hi ha dades enviades que no sabem què són.
+		- No envia les hores directament, per exemple, si no que ho fa dÃ­git a dÃ­git.
+		- Hi ha dades enviades que no sabem quÃ¨ sÃ³n.
 		
 - MOLTES DE LES FUNCIONALITATS QUE ES VOLEN IMPLEMENTAR NO ESTAN CREADES ENCARA.
 	- Veure Excel "Millores proto.xlsx"
 
 
-CREACIÓ I CONFIGURACIÓ DE L'ENTORN DE TREBALL
+CREACIÃ“ I CONFIGURACIÃ“ DE L'ENTORN DE TREBALL
 =========================================
 
-- Primer, instalem i configurem la màquina virtual / màquina Linux que ens farà de servidor.
-- Después, fem un "apt get" i un "apt upgrade" per acutalizar repositoris i paquets.
-- Un cop fet això, podem configurar docker a la màquina virtual, al linux container o a la màquina Linux que farem servir de servidor.
+- Primer, instalem i configurem la mÃ quina virtual / mÃ quina Linux que ens farÃ  de servidor.
+- DespuÃ©s, fem un "apt get" i un "apt upgrade" per acutalizar repositoris i paquets.
+- Un cop fet aixÃ², podem configurar docker a la mÃ quina virtual, al linux container o a la mÃ quina Linux que farem servir de servidor.
 
 Pasos
 -----
 
 #### **1.** Instalar i actualizar.
 
-He fet servir Debian 9 i Ubuntu 20.04, però podem usar qualsevol altra distribució soportada.
+He fet servir Debian 9 i Ubuntu 20.04, perÃ² podem usar qualsevol altra distribuciÃ³ soportada.
 
-*Apuntar els pasos per crear una màquina virtual Linux o el que convingui.*
+*Apuntar els pasos per crear una mÃ quina virtual Linux o el que convingui.*
 
 ```
  $ sudo apt install apt-transport-https ca-certificates curl software-properties-common
@@ -94,7 +94,7 @@ He fet servir Debian 9 i Ubuntu 20.04, però podem usar qualsevol altra distribu
 
 #### **4.** Instalar una imatge de docker.
 
-He fet servir la version "nginx" estable més nova, la 1.22.1. Podem consultar el llistat de les diferents versions actuals de nginx aquí: https://nginx.org/en/download.html
+He fet servir la version "nginx" estable mÃ©s nova, la 1.22.1. Podem consultar el llistat de les diferents versions actuals de nginx aquÃ­: https://nginx.org/en/download.html
 
 ```
  $ sudo docker pull nginx:1.22.1
@@ -118,45 +118,45 @@ He fet servir la version "nginx" estable més nova, la 1.22.1. Podem consultar e
  $ sudo docker run -name sampleapp -p 80:80 -d nginx:1.22.1
 ```
 
-#### **8.** Consultar que això funciona.
+#### **8.** Consultar que aixÃ² funciona.
 
-Primer hem de veure ip pública desde la terminal i consultar-la desde un navegador.
+Primer hem de veure ip pÃºblica desde la terminal i consultar-la desde un navegador.
 
-Si estem en una màquina virtual d'Azure o AWS, segurament ens apareixerà en la pàgina de configuració d'aquest.
+Si estem en una mÃ quina virtual d'Azure o AWS, segurament ens apareixerÃ  en la pÃ gina de configuraciÃ³ d'aquest.
 
-Si pel contrari estem en un Linux container o en un WLS, o en una altra màquina Linux, podem consultar la ip públic que tenim amb:
+Si pel contrari estem en un Linux container o en un WLS, o en una altra mÃ quina Linux, podem consultar la ip pÃºblic que tenim amb:
 ip a # veure apartat eth0.
 
-Si anem a un navegador qualsevol ubicat en la nostra màquina física i posem aquesta ip a la barra d'adreçes ens apareixerà quelcom com: Imatges/nignxWelcomStartPage
+Si anem a un navegador qualsevol ubicat en la nostra mÃ quina fÃ­sica i posem aquesta ip a la barra d'adreÃ§es ens apareixerÃ  quelcom com: Imatges/nignxWelcomStartPage
 
 Si apaguem el contenidor de docker i al engegarlo ens surt un error com:
 
 > docker: Error response from daemon: Conflict. The container name "/sampleapp" is already in use by container "55081d5847a5312c911d12f048e24f83c94382c009b9b1e8343429f15f4301d1". You have to remove (or rename) that container to be able to reuse that name.
  See 'docker run --help'.
 
-Tindrem de borrar el container que està causant el problema:
+Tindrem de borrar el container que estÃ  causant el problema:
 
 ```
  $ sudo docker rm 55081d5847a5312c911d12f048e24f83c94382c009b9b1e8343429f15f4301d1
 ```
 
-#### **9.** Reiniciar una màquina Windows Subsistem Linux (WSL)
+#### **9.** Reiniciar una mÃ quina Windows Subsistem Linux (WSL)
 
-Si ens trobem amb algún problema amb la màquina virtual (si aquesta ha estat la nostra opció), sempre podem reiniciar-la fent el següent.
+Si ens trobem amb algÃºn problema amb la mÃ quina virtual (si aquesta ha estat la nostra opciÃ³), sempre podem reiniciar-la fent el segÃ¼ent.
 
-Executant una terminal PowerShell com a administrador, escriure les següents comandes:
+Executant una terminal PowerShell com a administrador, escriure les segÃ¼ents comandes:
 
 ```
  $ wsl --shutdown # Per apagar el servei.
  $ wsl --start nomMaquina # Per iniciar-lo.
 ```
 
-DEPLOY D'UNA APLICACIÓ .NET CORE A LINUX
+DEPLOY D'UNA APLICACIÃ“ .NET CORE A LINUX
 =====================================
 
-#### **1.** Instal·lació de SDK i l'entorn de treball de .NET a Debian
+#### **1.** InstalÂ·laciÃ³ de SDK i l'entorn de treball de .NET a Debian
 
-En el meu cas, he fet servir l'última versió de Debian 9.
+En el meu cas, he fet servir l'Ãºltima versiÃ³ de Debian 9.
 
 Per fer-ho, he seguit el manual de microsoft https://learn.microsoft.com/es-es/dotnet/core/install/linux-debian.
 
@@ -171,13 +171,13 @@ Obrim un terminal i executem:
  $ sudo chown root:root /etc/apt/sources.list.d/microsoft-prod.list
 ```
 
-Amb això hem afegit la clau de la firma del paquet de Microsoft a la llista de claus de confiança. També agreguem el repositori de paquets.
+Amb aixÃ² hem afegit la clau de la firma del paquet de Microsoft a la llista de claus de confianÃ§a. TambÃ© agreguem el repositori de paquets.
 
-#### **2.** Instal·lació de SDK.
+#### **2.** InstalÂ·laciÃ³ de SDK.
 
 SDK permet desenvolupar aplicacions amb .NET.
 
-Instal·lant SDK de .NET, no necessita instalar l'entorn d'execució corresponenet.
+InstalÂ·lant SDK de .NET, no necessita instalar l'entorn d'execuciÃ³ corresponenet.
 
 Per instalar-ho, executar:
 
@@ -186,41 +186,41 @@ Per instalar-ho, executar:
  $ sudo apt install -y dotnet-sdk-6.0
 ```
 
-Com podem veure, he instal·lat la última versió de SDK fins la data d'avui: la 6.
+Com podem veure, he instalÂ·lat la Ãºltima versiÃ³ de SDK fins la data d'avui: la 6.
 
-(ACTUALMENT AQUESTA TECNOLOGIA ESTÀ DESCONTINUADA)
+(ACTUALMENT AQUESTA TECNOLOGIA ESTÃ€ DESCONTINUADA)
 
-#### **3.** Instal·lació del runtime
+#### **3.** InstalÂ·laciÃ³ del runtime
 
-L'entorn ASP.NET Core permet executar aplicacions .NET a les quals no s'ha proporcionat l'entorn d'execució.
+L'entorn ASP.NET Core permet executar aplicacions .NET a les quals no s'ha proporcionat l'entorn d'execuciÃ³.
 
-ASP.NET Core és el més compatible amb .NET.
+ASP.NET Core Ã©s el mÃ©s compatible amb .NET.
 
-Es pot instal·lar amb:
+Es pot instalÂ·lar amb:
 
 ```
  $ sudo apt update
  $ sudo apt install -y aspnetcore-runtime-6.0
 ```
 
-Si hi ha agut el següent error:
+Si hi ha agut el segÃ¼ent error:
 
 > Unable to locate package aspnetcore-runtime-6.0
 
-Es pot consultar la pàgina de manual de microsoft: https://learn.microsoft.com/es-es/dotnet/core/install/linux-debian#apt-troubleshooting
+Es pot consultar la pÃ gina de manual de microsoft: https://learn.microsoft.com/es-es/dotnet/core/install/linux-debian#apt-troubleshooting
 
-Si fa falta, també podem instalar l'entorn d'execució .NET, el qual no inclou compatibilitat amb ASP.NET:
+Si fa falta, tambÃ© podem instalar l'entorn d'execuciÃ³ .NET, el qual no inclou compatibilitat amb ASP.NET:
 
 ```
  $ sudo apt install dotnet-runtime-6.0
 ```
 
-#### **5.** Execució d'una aplicació .NET en un entorn Linux
+#### **5.** ExecuciÃ³ d'una aplicaciÃ³ .NET en un entorn Linux
 
-Un cop realitzats els pasos anteriors, podem fer correr una aplicació .NET amb la següent comanda (dins d'on tinguem el projecte .csproj).
+Un cop realitzats els pasos anteriors, podem fer correr una aplicaciÃ³ .NET amb la segÃ¼ent comanda (dins d'on tinguem el projecte .csproj).
 
 ```
-# Aplicació .NET 6.0
+# AplicaciÃ³ .NET 6.0
 $ dotnet run
 ```
 
@@ -228,21 +228,21 @@ $ dotnet run
 
 Que abans s'ha de crear el projecte .NET amb Visual Studio.
 
-#### **5.** Migrar el projecte a la màquina virtual Linux
+#### **5.** Migrar el projecte a la mÃ quina virtual Linux
 
-Primer de tot, s'ha de compilar i executar l'aplicació amb el Visual Studio.
+Primer de tot, s'ha de compilar i executar l'aplicaciÃ³ amb el Visual Studio.
 
-Després, hem de copiar la carpeta (carpeta arrel de l'aplicacio)/bin/Debug/netcoreapp3.1/publish a la nostra màquina Linux.
+DesprÃ©s, hem de copiar la carpeta (carpeta arrel de l'aplicacio)/bin/Debug/netcoreapp3.1/publish a la nostra mÃ quina Linux.
 
-Un cop ho haguem fet, en la carpeta publish de la màquina virtual hem d'executar:
+Un cop ho haguem fet, en la carpeta publish de la mÃ quina virtual hem d'executar:
 
 ```
  $ dotnet nomAplicacio.dll
 ```
 
-Hem de comprobar que el servidor està enviant quelcom (executar i mostrar captura).
+Hem de comprobar que el servidor estÃ  enviant quelcom (executar i mostrar captura).
 
-#### **6.** Configuració del servidor Nginx
+#### **6.** ConfiguraciÃ³ del servidor Nginx
 
 Anem a /etc/nginx/sites-available i modifiquem el _location_ que hi hagi dins del default per:
 
@@ -255,7 +255,7 @@ Anem a /etc/nginx/sites-available i modifiquem el _location_ que hi hagi dins de
 	proxy_cache_bypass $http_upgrade;
 ```
 
-Incís: per modificar aquest fitxer es necessiten els permisos adeqüats:
+IncÃ­s: per modificar aquest fitxer es necessiten els permisos adeqÃ¼ats:
 
 ```
  $ sudo chomod 677
@@ -268,26 +268,26 @@ Reiniciem el servei i el tornem a executar.
  $ sudo nginx -s reload
 ```
 
-EXECUCIÓ DE DOCKERS EN QUALSEVOL SISTEMA
+EXECUCIÃ“ DE DOCKERS EN QUALSEVOL SISTEMA
 ====================================
 
-Si tenim una aplicació .NET (ja sigui en Linux o Windows) dockeritzada (això ho podem fer en un entorn de desenvolupament Windows i amb Visual Studio fàcilment) [*ENSENYAR A LA MEMÒRIA COM ES POT FER!!!!*], podem.
+Si tenim una aplicaciÃ³ .NET (ja sigui en Linux o Windows) dockeritzada (aixÃ² ho podem fer en un entorn de desenvolupament Windows i amb Visual Studio fÃ cilment) [*ENSENYAR A LA MEMÃ’RIA COM ES POT FER!!!!*], podem.
 
 ```
  $ docker build -t image_name .
  $ docker run -it --rm -p 5000:80 --name container_name image_name
 ```
 
-La primera comanda compila l'aplicació Docker i crea una imatge de nom _image_name_. És *key sensitive*, pel qual el nom de la imatge ha d'anar en minúscules. La comanda busca _Dockerfile_ en el directori especificat (el punt vol dir directori actual), pel que es recomanable comprobar que existeixi abans d'executar qualsevol comanda.
+La primera comanda compila l'aplicaciÃ³ Docker i crea una imatge de nom _image_name_. Ã‰s *key sensitive*, pel qual el nom de la imatge ha d'anar en minÃºscules. La comanda busca _Dockerfile_ en el directori especificat (el punt vol dir directori actual), pel que es recomanable comprobar que existeixi abans d'executar qualsevol comanda.
 
-La segona inicia l'aplicació. La comanda elimina automàticament el contenidor quan aquest es tanqui i li asigna el port 5000 de la màquina local al port 80 del contenidor, i li dóna a aquest el nom de _container_name_. El contenidor s'asigna a la imatge _image_name_.
+La segona inicia l'aplicaciÃ³. La comanda elimina automÃ ticament el contenidor quan aquest es tanqui i li asigna el port 5000 de la mÃ quina local al port 80 del contenidor, i li dÃ³na a aquest el nom de _container_name_. El contenidor s'asigna a la imatge _image_name_.
 
-EXECUCIÓ DEL PROJECTE 4246 EN UN ENTORN LINUX
+EXECUCIÃ“ DEL PROJECTE 4246 EN UN ENTORN LINUX
 ========================================
 
 - Antecedents
-	- El projecte està preparat per funcionar en un entorn Windows.
-	- El projecte usa la versió 5 del framwork .NET.
+	- El projecte estÃ  preparat per funcionar en un entorn Windows.
+	- El projecte usa la versiÃ³ 5 del framwork .NET.
 	- Volem provar de fer-ho funcionar en un entorn Linux.
 
 - Al final hem aconseguit que funcioni en un entorn Linux.
@@ -295,30 +295,30 @@ EXECUCIÓ DEL PROJECTE 4246 EN UN ENTORN LINUX
 Pasos a seguir per fer funcionar el projecte 4246 en un entorn Linux
 --------------------------------------------------------------
 
-- Només necessitem la versió 5 de .NET, no fa falta instal·lar la 6 ni la 7.
-- Instal·lar la versio 5 de .NET: https://learn.microsoft.com/es-es/dotnet/core/install/linux-debian#debian-9-
+- NomÃ©s necessitem la versiÃ³ 5 de .NET, no fa falta instalÂ·lar la 6 ni la 7.
+- InstalÂ·lar la versio 5 de .NET: https://learn.microsoft.com/es-es/dotnet/core/install/linux-debian#debian-9-
 - Executar-ho amb "dotnet run".
 
 #### **1.** Problema 1
 
-Hi han inconsistencia entre el format de temps en .NET Core dintre de servidors Linux i Windows, ja que en Linux els formats d'hora tenen un protocol diferent (diferent forma d'escrirue) que en Windows. Això provoca un error ja que el programa no pot llegir aquests formats.
+Hi han inconsistencia entre el format de temps en .NET Core dintre de servidors Linux i Windows, ja que en Linux els formats d'hora tenen un protocol diferent (diferent forma d'escrirue) que en Windows. AixÃ² provoca un error ja que el programa no pot llegir aquests formats.
 
-- Enllaços d'interès:
+- EnllaÃ§os d'interÃ¨s:
 	- https://www.programmerall.com/article/743392620/
 	- https://dejanstojanovic.net/aspnet/2018/july/differences-in-time-zones-in-net-core-on-windows-and-linux-host-os/
 	- https://www.stevejgordon.co.uk/timezonenotfoundexception-in-alpine-based-docker-images
 	- *IMPORTANT* - https://stackoverflow.com/questions/41566395/timezoneinfo-in-net-core-when-hosting-on-unix-nginx
 
-#### **2.** Sol·lució 1
+#### **2.** SolÂ·luciÃ³ 1
 
-Per sol·lucionar aquest error, podem canviar la variable que ens està causant el problema. Per trobar-la i no tindre que buscar fitxer per fitxer, podem fer servir la comanda grep:                                 |
+Per solÂ·lucionar aquest error, podem canviar la variable que ens estÃ  causant el problema. Per trobar-la i no tindre que buscar fitxer per fitxer, podem fer servir la comanda grep:                                 |
 
 ```
  # Dins del folder on tinguem els fitxers del projecte 4246.
  $ grep -ri "TimeZoneInfo.FindSystemTimezoneById"
 ```
 
-La podem canviar pel format que usa Linux usant vim. Substituim la línia:
+La podem canviar pel format que usa Linux usant vim. Substituim la lÃ­nia:
 
 ```
 string _spainTimeZoneId = "Romance Standard Time";
@@ -330,12 +330,12 @@ Per:
 	string _spainTimeZoneId = "Europe/Madrid";
 ```
 
-STANDARD SQL - Us dels mòduls SQL d'Ingimec
+STANDARD SQL - Us dels mÃ²duls SQL d'Ingimec
 =======================================
 
-Per fer servir bases de dades SQL usant els estàndards d'Ingimec hem de crear-nos primer un mòdul XML. Això ho podem fer manualment o a través de l'eina <<ING_SQL_XML_Configurator>>, que a través d'una interfície gràfica creada amb WinsForms ens genera un arxiu XML amb les dades necessàries per poder usar bases de dades SQL en els projectes de la empresa.
+Per fer servir bases de dades SQL usant els estÃ ndards d'Ingimec hem de crear-nos primer un mÃ²dul XML. AixÃ² ho podem fer manualment o a travÃ©s de l'eina <<ING_SQL_XML_Configurator>>, que a travÃ©s d'una interfÃ­cie grÃ fica creada amb WinsForms ens genera un arxiu XML amb les dades necessÃ ries per poder usar bases de dades SQL en els projectes de la empresa.
 
-Un cop fet això, el primer que hem de fer és comprobar que aquest fitxer XML generat tingui les dades correctes. Podem compar-les amb les que hi ha a la base de dades fent:
+Un cop fet aixÃ², el primer que hem de fer Ã©s comprobar que aquest fitxer XML generat tingui les dades correctes. Podem compar-les amb les que hi ha a la base de dades fent:
 
 ```
 string pathXML = "Path on haguem guardat el fitxer. Preferiblement, ha d'estar dins la carpeta del mateix projecte.";
@@ -351,7 +351,7 @@ if (dbResult != 0) {
 }
 ```
 
-Si això no ens retorna cap error, podem fer una consulta. Per fer un ```SELECT TOP (10) * FROM taula```, cridarem la funció _GetXRegisters_:
+Si aixÃ² no ens retorna cap error, podem fer una consulta. Per fer un ```SELECT TOP (10) * FROM taula```, cridarem la funciÃ³ _GetXRegisters_:
 
 ```
 string selectError;
@@ -385,11 +385,11 @@ for (int k = 0; k < 10; k++) {
 Console.WriteLine(result);
 ```
 
-#### **1.** Si volem incloure una taula sencera de la BD  al nostre WPF gràfic
+#### **1.** Si volem incloure una taula sencera de la BD  al nostre WPF grÃ fic
 
-##### **1.1** Opció 1, fent servir .NET Framworks i LINQ
+##### **1.1** OpciÃ³ 1, fent servir .NET Framworks i LINQ
 
-Hem d'instal·lar els següents paquets Nuget.
+Hem d'instalÂ·lar els segÃ¼ents paquets Nuget.
 
 - Microsoft.EntityFrameworkCore.Design
 
@@ -403,17 +403,17 @@ I obrir la *consola del gestor de paquets Nuget* per escriure:
 Scaffold-DbContext "Server=.\LOCAL_SERVER;User ID=YOUR_DB_USER;Password=YOUR_DB_PASSWORD;Database=YOUR_DATABASE;Trusted_Connection=False;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
 ```
 
-I després crear un nou item al projecte de tipus _ADO.NET Entity Data Model_.
+I desprÃ©s crear un nou item al projecte de tipus _ADO.NET Entity Data Model_.
 
-Si ens trobem amb algún error com:
+Si ens trobem amb algÃºn error com:
 
-> A connection was successfully established with the server, but then an error occurred during the login process. (provider: SSL Provider, error: 0 - La cadena de certificación fue emitida por una entidad en la que no se confía.)
+> A connection was successfully established with the server, but then an error occurred during the login process. (provider: SSL Provider, error: 0 - La cadena de certificaciÃ³n fue emitida por una entidad en la que no se confÃ­a.)
 
-Hem d'afegir ```TrustServerCertificate=True``` a la instrucció.
+Hem d'afegir ```TrustServerCertificate=True``` a la instrucciÃ³.
 
-Amb això se'ns haurà agregat la BD ja creada al nostre projecte.
+Amb aixÃ² se'ns haurÃ  agregat la BD al nostre projecte.
 
-Per mostrar-ho per pantalla (*aquesta potser �s la opci� m�s f�cil*), hem de seguir els seg�ents pasos.
+Per mostrar-ho per pantalla (*aquesta potser és la opció més fàcil*), hem de seguir els següents pasos.
 
 1. En l'editor XAML hem d'afegir un controlador d'events dins de _Window_ per a l'event _loaded_: ```Loaded = "Window_Loaded"```.
 
@@ -438,30 +438,30 @@ private void Window_Loaded (object sender, RoutedEventArgs e) {
 
 ```
 
-Si compilem i executem aix�, veurem per pantalla una taula amb les X files de la taula de la BD que volguem mostrar.
+Si compilem i executem això, veurem per pantalla una taula amb les X files de la taula de la BD que volguem mostrar.
 
-##### **1.2** Opció 2, fent servir .NET i els mòduls Stàndard d'Ingimec
+##### **1.2** OpciÃ³ 2, fent servir .NET i els mÃ²duls StÃ ndard d'Ingimec
 
-Amb les instruccions que hem vist anteriorment hem obtingut una llista de llistes que conté les X primeres files d'una taula de la nostra base de dades. Si volem imprimir-ho en una interfície gràfica, podem fer el següent.
+Amb les instruccions que hem vist anteriorment hem obtingut una llista de llistes que contÃ© les X primeres files d'una taula de la nostra base de dades. Si volem imprimir-ho en una interfÃ­cie grÃ fica, podem fer el segÃ¼ent.
 
-1. Primer hem de definir un <<DataGrid>>, que serà on mostrarem el contigunt de la taula.
+1. Primer hem de definir un <<DataGrid>>, que serÃ  on mostrarem el contigunt de la taula.
 
-2. Després, hem de recórrer la llista de llistes per tal formatejar les dades correctament.
+2. DesprÃ©s, hem de recÃ³rrer la llista de llistes per tal formatejar les dades correctament.
 
-	- Com que el contigut de la llista de llistes està format en base a "objectes", si no formatejem bé les dades aquestes no se'ns mostraràn, o bé ho faràn d'alguna forma incorrecta.
+	- Com que el contigut de la llista de llistes estÃ  format en base a "objectes", si no formatejem bÃ© les dades aquestes no se'ns mostrarÃ n, o bÃ© ho farÃ n d'alguna forma incorrecta.
 
 ```
 // Abans hem guardat el contingut de la taula en una variable de nom "_datamans".
-// Ens creem una llista que contindrà el nom de cada columna de la nostra taula per a mostrar-ho en la
-// Interfície gràfica final.
+// Ens creem una llista que contindrÃ  el nom de cada columna de la nostra taula per a mostrar-ho en la
+// InterfÃ­cie grÃ fica final.
 List<string> headers = new List<string> {
 
-	"Aquí", "Posarem", "El", "Titol", "De", "Cada", "Columna", "Per", "Tal", "De", "Mostrar-ho", "Correctament", "En", "La", "Pantalla"
+	"AquÃ­", "Posarem", "El", "Titol", "De", "Cada", "Columna", "Per", "Tal", "De", "Mostrar-ho", "Correctament", "En", "La", "Pantalla"
 
 };
 
 // Degut a que la quantitat de columnes de la taula pot variar, tranformarem les seves dades al format correcte.
-// També farem servir DataTable per a que ens sigui més fàcil després insertar les dades en el DataGrid.
+// TambÃ© farem servir DataTable per a que ens sigui mÃ©s fÃ cil desprÃ©s insertar les dades en el DataGrid.
 var dataTable = new DataTable();
 
 // Crea les columnes del DataGrid.
@@ -480,7 +480,7 @@ for (int k = 0; k < _datamans.Count; k++) {
 
 }
 
-// I finalment mostrem el DataGrid en la nostra interfície.
+// I finalment mostrem el DataGrid en la nostra interfÃ­cie.
 showTable.ItemSource = dt.DefaultView;
 ```
 
