@@ -387,7 +387,7 @@ Console.WriteLine(result);
 
 #### **1.** Si volem incloure una taula sencera de la BD  al nostre WPF grÃ fic
 
-##### **1.1** OpciÃ³ 1, fent servir .NET Framworks i LINQ
+##### **1.1** OpciÃ³ 1, fent servir .NET Framwork i LINQ
 
 Hem d'instalÂ·lar els segÃ¼ents paquets Nuget.
 
