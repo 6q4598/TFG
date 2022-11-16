@@ -387,6 +387,8 @@ Console.WriteLine(result);
 
 #### **1. ** Si volem incloure una taula sencera de la BD al nostre WPF gràfica
 
+##### **1.1** Opció 1, fent servir .NET Framwork i LINQ
+
 Hem d'instal·lar els següents paquets Nuget.
 
 - Microsoft.EntityFrameworkCore.Design
@@ -410,3 +412,48 @@ Si ens trobem amb algún error com:
 Hem d'afegir ```TrustServerCertificate=True``` a la instrucció.
 
 Amb això se'ns haurà agregat la BD ja creada al nostre projecte.
+
+##### **1.2** Opció 2, fent servir .NET i els mòduls Stàndard d'Ingimec
+
+Amb les instruccions que hem vist anteriorment hem obtingut una llista de llistes que conté les X primeres files d'una taula de la nostra base de dades. Si volem imprimir-ho en una interfície gràfica, podem fer el següent.
+
+1. Primer hem de definir un <<DataGrid>>, que serà on mostrarem el contigunt de la taula.
+
+2. Després, hem de recórrer la llista de llistes per tal formatejar les dades correctament.
+
+	- Com que el contigut de la llista de llistes està format en base a "objectes", si no formatejem bé les dades aquestes no se'ns mostraràn, o bé ho faràn d'alguna forma incorrecta.
+
+```
+// Abans hem guardat el contingut de la taula en una variable de nom "_datamans".
+// Ens creem una llista que contindrà el nom de cada columna de la nostra taula per a mostrar-ho en la
+// Interfície gràfica final.
+List<string> headers = new List<string> {
+
+	"Aquí", "Posarem", "El", "Titol", "De", "Cada", "Columna", "Per", "Tal", "De", "Mostrar-ho", "Correctament", "En", "La", "Pantalla"
+
+};
+
+// Degut a que la quantitat de columnes de la taula pot variar, tranformarem les seves dades al format correcte.
+// També farem servir DataTable per a que ens sigui més fàcil després insertar les dades en el DataGrid.
+var dataTable = new DataTable();
+
+// Crea les columnes del DataGrid.
+int numberColumns = 13;
+
+for (int k = 0; k < numberColumns; k++) {
+
+	dataTable.Columns.Add(headers[k]);
+
+}
+
+// Copia les dades de la taula de la base de dades en el DataTable.
+for (int k = 0; k < _datamans.Count; k++) {
+
+	dt.Rows.Add(_datamans[k].Take(numberColumns).ToArray());
+
+}
+
+// I finalment mostrem el DataGrid en la nostra interfície.
+showTable.ItemSource = dt.DefaultView;
+```
+
