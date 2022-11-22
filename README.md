@@ -271,7 +271,7 @@ Reiniciem el servei i el tornem a executar.
 EXECUCIà DE DOCKERS EN QUALSEVOL SISTEMA
 ====================================
 
-Si tenim una aplicació .NET (ja sigui en Linux o Windows) dockeritzada (això ho podem fer en un entorn de desenvolupament Windows i amb Visual Studio fàcilment) [*ENSENYAR A LA MEMàRIA COM ES POT FER!!!!*], podem.
+Si tenim una aplicació .NET (ja sigui en Linux o Windows) dockeritzada (això ho podem fer en un entorn de desenvolupament Windows i amb Visual Studio fàcilment) [*ENSENYAR A LA MEMàRIA COM ES POT FER!!!!*], podem executar les següents comandes. S'ha de tindre en compte que per executar la comanda que construeix el container de Docker hem d'estar a la carpeta de la sol·lució (no del projecte, això ho podem saber perquè tindrem un fitxer $$.sln$$ y la carpeta del projecte en el directori) i hem de tindre el fitxer _Dockerfile_ en la mateixa carpeta.
 
 ```
  $ docker build -t image_name .
