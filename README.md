@@ -51,13 +51,13 @@ APUNTS TFG
 	- No se amb quina tecnologia està implementada actualment la BD.
 	- Envia un format molt raro, similar a JSON:
 		- No envia les hores directament, per exemple, si no que ho fa dígit a dígit.
-		- Hi ha dades enviades que no sabem quà són.
+		- Hi ha dades enviades que no sabem què són.
 		
 - MOLTES DE LES FUNCIONALITATS QUE ES VOLEN IMPLEMENTAR NO ESTAN CREADES ENCARA.
 	- Veure Excel "Millores proto.xlsx"
 
 
-CREACIà I CONFIGURACIà DE L'ENTORN DE TREBALL
+CREACIÓ I CONFIGURACIÓ DE L'ENTORN DE TREBALL
 =========================================
 
 - Primer, instalem i configurem la màquina virtual / màquina Linux que ens farà de servidor.
@@ -188,7 +188,7 @@ Per instalar-ho, executar:
 
 Com podem veure, he instal·lat la última versió de SDK fins la data d'avui: la 6.
 
-(ACTUALMENT AQUESTA TECNOLOGIA ESTà DESCONTINUADA)
+(ACTUALMENT AQUESTA TECNOLOGIA ESTÀ DESCONTINUADA)
 
 #### **3.** Instal·lació del runtime
 
@@ -268,21 +268,21 @@ Reiniciem el servei i el tornem a executar.
  $ sudo nginx -s reload
 ```
 
-EXECUCIà DE DOCKERS EN QUALSEVOL SISTEMA
+EXECUCIÓ DE DOCKERS EN QUALSEVOL SISTEMA
 ====================================
 
-Si tenim una aplicació .NET (ja sigui en Linux o Windows) dockeritzada (això ho podem fer en un entorn de desenvolupament Windows i amb Visual Studio fàcilment) [*ENSENYAR A LA MEMàRIA COM ES POT FER!!!!*], podem.
+Si tenim una aplicació .NET (ja sigui en Linux o Windows) dockeritzada (això ho podem fer en un entorn de desenvolupament Windows i amb Visual Studio fàcilment) [*ENSENYAR A LA MEMÒRIA DEL TFG COM ES POT FER!!!!*], podem.
 
 ```
  $ docker build -t image_name .
  $ docker run -it --rm -p 5000:80 --name container_name image_name
 ```
 
-La primera comanda compila l'aplicació Docker i crea una imatge de nom _image_name_. às *key sensitive*, pel qual el nom de la imatge ha d'anar en minúscules. La comanda busca _Dockerfile_ en el directori especificat (el punt vol dir directori actual), pel que es recomanable comprobar que existeixi abans d'executar qualsevol comanda.
+La primera comanda compila l'aplicació Docker i crea una imatge de nom _image_name_. És *key sensitive*, pel qual el nom de la imatge ha d'anar en minúscules. La comanda busca _Dockerfile_ en el directori especificat (el punt vol dir directori actual), pel que es recomanable comprobar que existeixi abans d'executar qualsevol comanda.
 
 La segona inicia l'aplicació. La comanda elimina automàticament el contenidor quan aquest es tanqui i li asigna el port 5000 de la màquina local al port 80 del contenidor, i li dóna a aquest el nom de _container_name_. El contenidor s'asigna a la imatge _image_name_.
 
-EXECUCIà DEL PROJECTE 4246 EN UN ENTORN LINUX
+EXECUCIÓ DEL PROJECTE 4246 EN UN ENTORN LINUX
 ========================================
 
 - Antecedents
@@ -303,7 +303,7 @@ Pasos a seguir per fer funcionar el projecte 4246 en un entorn Linux
 
 Hi han inconsistencia entre el format de temps en .NET Core dintre de servidors Linux i Windows, ja que en Linux els formats d'hora tenen un protocol diferent (diferent forma d'escrirue) que en Windows. Això provoca un error ja que el programa no pot llegir aquests formats.
 
-- Enllaàos d'interàs:
+- Enllaços d'interès:
 	- https://www.programmerall.com/article/743392620/
 	- https://dejanstojanovic.net/aspnet/2018/july/differences-in-time-zones-in-net-core-on-windows-and-linux-host-os/
 	- https://www.stevejgordon.co.uk/timezonenotfoundexception-in-alpine-based-docker-images
