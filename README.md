@@ -283,7 +283,7 @@ La primera comanda compila l'aplicació Docker i crea una imatge de nom _image_n
 La segona inicia l'aplicació. La comanda elimina automàticament el contenidor quan aquest es tanqui i li asigna el port 5000 de la màquina local al port 80 del contenidor, i li dóna a aquest el nom de _container_name_. El contenidor s'asigna a la imatge _image_name_.
 
 EXECUCIÒ DEL PROJECTE 4246 EN UN ENTORN LINUX
-========================================
+=============================================
 
 - Antecedents
 	- El projecte està preparat per funcionar en un entorn Windows.
@@ -329,6 +329,45 @@ Per:
 ```
 	string _spainTimeZoneId = "Europe/Madrid";
 ```
+
+COMPILACIÓ I EXECUCIÓ DEL PROGRAMA QUE CONTROLA EL ESP32 ACTUAL AMB ARDUINO IDE
+===============================================================================
+
+Primer de tot hem de trobar i executar el programa .INO actual que controla el Industrial Shields ESP32 10 IOS PLC. Aquest programa el trobem dins la carpeta de projectes: _Projectes/4226/15- Programació/Entregues ASOINDEL/E3.2/_ i dins del .zip ubicat dins d'aquesta carpeta hem de buscar el fitxer .INO que ens permetrà programar el ESP32 amb el programa que controla el PLC ESP32 instal·lat actualment en l'empresa client. *TODO: redactar millor*.
+
+Si en el moment de compilar-ho i carregar-ho en el PLC ens trobem amb el següent error:
+
+```
+Property 'upload.tool.serial' is undefined.
+```
+
+Tindrem de modificar les llibreries de Industrial Shields localment. Hem d'anar a _:C/users/farrufi/AppData/Local/Arduino15/packages/industrialshields/harware/esp32/2.1.2/_ i modificar el fitxer ```boards.txt```, cambiant la següent línea:
+
+```
+plc10ios.upload.tool = esptool_py
+```
+
+Per:
+
+```
+plc10ios.upload.tool.serial=esptool_py
+```
+
+També haurem de modificar alguns fitxers de configuració, inicialitzant variables i afegint algunes excepcions.
+
+1. En _C:/Users/farrufi/AppData/Local/Arduino15/packages/industrialshields/hardware/esp32/2.1.2/tools/sdk/esp32/include/openssl/include/openssl/ssl.h_ hem de comentar la següent línea:
+
+```
+#warning "OpenSSL component will be removed from ESP-IDF in v5.0, please use esp_tls instead"
+```
+
+2. En _C:/Users/farrufi/Documents/Arduino/libraries/ESP32_AzureIoT_Arduino-master/src/az_iot/iothub_client/src/iothubtransport_mqtt_common.c_ hem d'inicialitzar la variable ```request_id``` a $0$.
+
+3. Hem d'afegir l'excepció en forma d'atribut ```__atribute__((unused))``` davant de les funcions en els següents archius de configuració.
+
+- C:/Users/farrufi/Documents/Arduino/libraries/ESP32_AzureIoT_Arduino-master/src/az_iot/iothub_client/src/iothub_client_retry_control.c; funció *evaluate_retry_action_fixed_interval*.
+- C:/Users/farrufi/Documents/Arduino/libraries/ESP32_AzureIoT_Arduino-master/src/az_iot/iothub_client/src/iothubtransport_mqtt_common.c; funció *is_key_validate*.
+- C:/Users/farrufi/AppData/Local/Arduino15/packages/industrialshields/hardware/esp32/2.1.2/cores/industrialshields/expanded-gpio.c; funció *isAddressIntoArray*.
 
 STANDARD SQL - Us dels mòduls SQL d'Ingimec
 =======================================
@@ -444,7 +483,7 @@ Si compilem i executem això, veurem per pantalla una taula amb les X files de l
 
 Amb les instruccions que hem vist anteriorment hem obtingut una llista de llistes que conté les X primeres files d'una taula de la nostra base de dades. Si volem imprimir-ho en una interfície gràfica, podem fer el següent.
 
-1. Primer hem de definir un <<DataGrid>>, que serà on mostrarem el contigunt de la taula.
+1. Primer hem de definir un ```DataGrid```, que serà on mostrarem el contigunt de la taula.
 
 2. Després, hem de recórrer la llista de llistes per tal formatejar les dades correctament.
 
