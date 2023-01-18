@@ -361,13 +361,13 @@ També haurem de modificar alguns fitxers de configuració, inicialitzant variab
 #warning "OpenSSL component will be removed from ESP-IDF in v5.0, please use esp_tls instead"
 ```
 
-2. En _C:/Users/farrufi/Documents/Arduino/libraries/ESP32_AzureIoT_Arduino-master/src/az_iot/iothub_client/src/iothubtransport_mqtt_common.c_ hem d'inicialitzar la variable ```request_id``` a $0$.
+2. En *C:/Users/farrufi/Documents/Arduino/libraries/ESP32_AzureIoT_Arduino-master/src/az_iot/iothub_client/src/iothubtransport_mqtt_common.c* hem d'inicialitzar la variable ```request_id``` a $0$.
 
 3. Hem d'afegir l'excepció en forma d'atribut ```__atribute__((unused))``` davant de les funcions en els següents archius de configuració.
 
-- C:/Users/farrufi/Documents/Arduino/libraries/ESP32_AzureIoT_Arduino-master/src/az_iot/iothub_client/src/iothub_client_retry_control.c; funció *evaluate_retry_action_fixed_interval*.
-- C:/Users/farrufi/Documents/Arduino/libraries/ESP32_AzureIoT_Arduino-master/src/az_iot/iothub_client/src/iothubtransport_mqtt_common.c; funció *is_key_validate*.
-- C:/Users/farrufi/AppData/Local/Arduino15/packages/industrialshields/hardware/esp32/2.1.2/cores/industrialshields/expanded-gpio.c; funció *isAddressIntoArray*.
+- *C:/Users/farrufi/Documents/Arduino/libraries/ESP32_AzureIoT_Arduino-master/src/az_iot/iothub_client/src/iothub_client_retry_control.c*; funció **evaluate_retry_action_fixed_interval**.
+- *C:/Users/farrufi/Documents/Arduino/libraries/ESP32_AzureIoT_Arduino-master/src/az_iot/iothub_client/src/iothubtransport_mqtt_common.c*; funció **is_key_validate**.
+- *C:/Users/farrufi/AppData/Local/Arduino15/packages/industrialshields/hardware/esp32/2.1.2/cores/industrialshields/expanded-gpio.c*; funció **isAddressIntoArray**.
 
 STANDARD SQL - Us dels mòduls SQL d'Ingimec
 =======================================
@@ -522,4 +522,5 @@ for (int k = 0; k < _datamans.Count; k++) {
 // I finalment mostrem el DataGrid en la nostra interfície.
 showTable.ItemSource = dt.DefaultView;
 ```
+
 
