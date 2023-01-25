@@ -1,0 +1,21 @@
+- Grafana soporta SQLITE, MYSQL i POSTGRE_SQL
+
+- La url web corre a través del port 3000 per defecte.
+
+- Arreglar error <<N: S'omet l'ús del fitxer configurat «main/binary-i386/Packages» ja que el dipòsit «https://packages.grafana.com/oss/deb stable InRelease» no admet l'arquitectura «i386»>>, al actualitzar els paquets del sistema.
+
+	- cd /etc/apt/sources.list.d/
+	- afegir [arch = amd64] entre el deb i la uri.
+	- https://ubuntinux.blogspot.com/2019/11/no-admite-arquitectura-i386.html
+
+- Quan iniciem el servei de Grafana-server amb systemctl ens surt el següent error <<System has not been booted with systemd as init system (PID 1). Can't operate.
+Failed to connect to bus: L’estació no està operativa>>, el qual apareix quan intentem executar la comanda amb ssh.
+
+	- https://askubuntu.com/questions/1379425/system-has-not-been-booted-with-systemd-as-init-system-pid-1-cant-operate
+	- Podem veure quin sistema d'inici hi ha configurat en el Sistema Operatiu amb 
+
+		- ps -p 1 -o comm=
+
+	- I podem veure que surt <<init>>, pel que hem de procedir segons el que diu la pàgina:
+
+		- https://linuxhandbook.com/system-has-not-been-booted-with-systemd/

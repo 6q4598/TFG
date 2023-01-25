@@ -1,0 +1,18 @@
+Tutorial sobre com instalar Docker en Debian 11
+===============================================
+https://docs.docker.com/desktop/install/debian
+
+Tutorial sobre com donar permisos per fer correr Docker sense sudo
+==================================================================
+https://www.enmimaquinafunciona.com/pregunta/171405/es-posible-utilizar-docker-sin-sudo
+
+	- Un cop fet això, s'ha de reiniciar la màquina Linux.
+	- En aquest cas, la VirtualBox amb MX Linux.
+
+
+
+
+
+
+
+

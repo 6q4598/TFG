@@ -1,0 +1,8 @@
+===============
+DADES TAULA SQL
+===============
+
+Columnes SQL
+------------
+
+Data string , Ok string , TempsOK string , NOK string , TempsNOK string , Auto string , Error string , TempsError string , DI5 string , TempsDI5 string , DI6 string , TempsDI6 string , DI7 string , TempsDI7 string , DI8 string , TempsDI8 string , DI9 string , TempsDI9 string , DI10 string , TempsDI10 string
