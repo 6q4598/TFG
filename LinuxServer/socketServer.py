@@ -5,7 +5,7 @@ import socket
 import json
 
 json_received = """{"DI1":"0", "temps_DI1":"0","DI2":"0", "temps_DI2":"0","DI3":"0", "temps_DI3":"0","DI4":"0", "temps_DI4":"0","DI5":"0", "temps_DI5":"0", "DI6":"0", "temps_DI6":"0","DI7":"0", "temps_DI7":"0","DI8":"0", "temps_DI8":"0","DI9":"0", "temps_DI9":"0","DI10":"0", "temps_DI10":"0"}"""
-db_path = "/home/admin/TFG/esp32.db"
+db_path = "/home/admin/TFG/LinuxServer/esp32.db"
 db_query = "INSERT INTO esp32_table (Data,Ok,TempsOK,NOK,TempsNOK,Auto,Error,TempsError,DI5,TempsDI5,DI6,TempsDI6,DI7,TempsDI7,DI8,TempsDI8,DI9,TempsDI9,DI10,TempsDI10) VALUES (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)"
 
 print("""
@@ -71,7 +71,6 @@ def main():
 	
 		# Accept the server.
 		client, addr = s.accept();
-		k = 0;
 	
 		while True:
 	
@@ -88,14 +87,10 @@ def main():
 				print(type(content))
 				insert_query_db(connection, cursor, query_db)
 				print("\n==================================\n")
-				k += 1
 	
 	
 		print("Client desconnected.")
 		client.close()
-	
-		if (k != 0):
-			break
 
 # ----------------------------------------------------------------------------- #
 # MAIN PROGRAM                                                                  #
