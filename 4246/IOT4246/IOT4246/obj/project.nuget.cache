@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "dgSpecHash": "gcYUMR+3dUNW8m5ZywRoa4LOqREX5bLCEte5Wy+hcYyng+FKqwqCUI0gfjaxYe/KprxSkyaXRr+9gtZeqy38vA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\farrufi\\Documents\\TFG\\4246\\IOT4246\\IOT4246\\IOT4246.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\farrufi\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.17.0\\microsoft.visualstudio.azure.containers.tools.targets.1.17.0.nupkg.sha512",
+    "C:\\Users\\farrufi\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.13\\microsoft.netcore.app.host.win-x64.6.0.13.nupkg.sha512",
+    "C:\\Users\\farrufi\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.13\\microsoft.aspnetcore.app.ref.6.0.13.nupkg.sha512",
+    "C:\\Users\\farrufi\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.13\\microsoft.windowsdesktop.app.ref.6.0.13.nupkg.sha512",
+    "C:\\Users\\farrufi\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.13\\microsoft.netcore.app.ref.6.0.13.nupkg.sha512"
+  ],
+  "logs": []
+}
