@@ -15,9 +15,12 @@ public class HelloWorldController : Controller {
 
     // 
     // GET: /HelloWorld/Welcome/ 
-    public string Welcome (string str, int k = 1) {
+    public IActionResult Welcome (string s, int k = 1) {
 
-        return HtmlEncoder.Default.Encode($"Hello {str} num is {k}");
+        ViewData["Message"] = "Hello " + s;
+        ViewData["NumTimes"] = k;
+        return View();
+        // return HtmlEncoder.Default.Encode($"Hello {str} num is {k}");
 
     }
 

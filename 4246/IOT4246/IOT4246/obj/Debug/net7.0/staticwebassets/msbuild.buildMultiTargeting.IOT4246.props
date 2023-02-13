@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\IOT4246.props" />
+</Project>
