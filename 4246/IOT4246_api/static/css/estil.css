@@ -1,0 +1,307 @@
+:root {
+
+  --primary: #0000000f;
+  --light: #fbfbfb;
+  --grey: #efefef;
+
+}
+
+body {
+
+  font-family: "Rubik", sans-serif;
+  background-color: var(--light)!important;
+
+}
+
+a:hover {
+
+  text-decoration:dotted;
+
+}
+
+.bg-primary {
+
+  background-color: var(--primary) !important;
+  width: 20%;
+
+}
+
+.card-header {
+
+  border: 0;
+  border-color: transparent;
+  background-color: #7fffd4;
+
+}
+
+hr {
+
+  margin: 0.1rem;
+  color: black;
+  background-color: currentColor;
+  border: 0;
+  opacity: 0.25;
+
+}
+
+content {
+
+  overflow-y: auto;
+  height: 100vh;
+  padding-bottom: 5rem;
+  margin-top: 3rem;
+  background-color: red;
+  margin-top: 3rem;
+  margin-left: 2rem;
+
+}
+
+.row {
+
+  margin-top: 3rem;
+  margin-left: 2rem;
+
+}
+
+.img-responsive {
+
+  width: 100%;
+  height: auto;
+
+}
+
+.navbar-logo {
+
+  display: inline-flex;
+  vertical-align: left;
+  width: 200px;
+
+}
+
+.navbar-logo img {
+
+  width: auto;
+  height: auto;
+  vertical-align: middle;
+  margin-top: 3rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+
+}
+
+#sidebar-container {
+
+  min-height: 100vh;
+  width: 15rem;
+  justify-content: center;
+  align-items: center;
+  border-radius: 15px 15px 15px 15px;
+  border-style: solid;
+  border-color: var(--primary);
+  border-left: 14px;
+  color: var(--light);
+
+}
+
+#sidebar-container .logo {
+
+  padding: 0.875rem 1.25rem;
+
+}
+
+.sidebar-text {
+
+  text-align: center;
+  font-size: small;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  color: #212529;
+  border-radius: 80px 90px 80px 90px;
+
+}
+
+.sidebar-text-clock{
+
+  color: #212529;
+  width: 243px;
+  text-align: center;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  border-radius: 20px 0px 0px 20px;
+  border-top: solid var(--primary);
+  border-bottom: solid var(--primary);
+  border-left: solid var(--primary);
+  border-right: 12px solid #fbfbfb!important;
+
+}
+
+.chart-container {
+
+  margin: auto;
+  height: 80vh;
+  width: 80vw;
+
+}
+
+.column {
+  float: left;
+  width: 50%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.graphBox {
+
+  position: relative;
+  margin-left: 2rem;
+  margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 30px;
+  min-height: 200px;
+
+}
+
+.graphBoxForm {
+
+  position: relative;
+  margin-left: 2rem;
+  margin-bottom: 1px;
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 30px;
+  min-height: 200px;
+
+}
+
+.graphBox .box {
+
+  position: relative;
+  background: transparent;
+  padding: 20px;
+  width: 100%;
+
+}
+
+@media screen and (max-width: 1444px) {
+
+  #sidebar-container{
+
+    display: none;
+
+  }
+
+  .graphBox {
+
+    grid-template-columns: 1fr 1fr 1fr;
+    vertical-align: middle;
+    height: auto;
+
+  }
+
+}
+
+@media screen and (max-width: 1194px) {
+
+  .graphBox, .graphBoxForm {
+
+    grid-template-columns: 1fr 1fr;
+    height: auto;
+
+  }
+
+}
+
+@media screen and (max-width: 776px) {
+
+  .graphBox, .graphBoxForm {
+
+    grid-template-columns: 1fr;
+    height: auto;
+
+  }
+
+}
+
+#sidebar-container .menu {
+
+  width: 18rem;
+
+}
+
+/* Analog clock. */
+.container-clock {
+
+    text-align: center;
+    ;
+
+}
+
+.container-clock h1 {
+
+    font-size: 2rem;
+    font-weight: 400;
+
+}
+
+.container-clock p {
+
+    font-size: 1.5rem;
+
+}
+
+/* Datapicker */
+input[type="date"], input[type='time'] {
+
+  background-color: var(--light);
+  padding: 0.75rem;
+  color: #6c757d!important;
+  border-radius: 20px;
+  border: solid var(--grey);
+  font-size: 1.5rem;
+  font-weight: 400;
+  text-align: center;
+
+}
+
+input[type='submit'] {
+
+  background-color: var(--grey);
+  margin-top: 1.5rem;
+  padding: 0.75rem;
+  color: #6c757d!important;
+  border-radius: 20px;
+  border: solid #6c757d!important; 
+  font-size: 1.5rem;
+  font-weight: 400;
+  text-align: center;
+  width: 200px;
+
+}
+
+input[type='submit']:hover {
+
+  background-color: #6c757d;
+  border: solid var(--grey)!important;
+  color: var(--grey)!important;
+  width: 200px;
+
+}
+
+::-webkit-calendar-picker-indicator{
+
+  background-color: var(--light);
+  border: solid #6c757d!important;
+  padding: 0,25px;
+  cursor: pointer;
+  border-radius: 10px;
+
+}
