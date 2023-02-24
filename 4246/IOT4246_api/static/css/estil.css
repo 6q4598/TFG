@@ -178,7 +178,7 @@ content {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-gap: 30px;
-  min-height: 200px;
+  min-height: 150px;
 
 }
 
@@ -191,6 +191,54 @@ content {
 
 }
 
+.charbox {
+
+  position: relative;
+  min-height: auto;
+  width: 100%;
+  display: flex;
+  flex-grow: 1;
+
+}
+
+.filterOeeValues {
+
+  background-color: var(--primary);
+  margin-right: 20px;
+  border-radius: 0px 20px 20px 0px;
+
+}
+
+#sidebar-container .menu {
+
+  width: 18rem;
+
+}
+
+/* Analog clock. */
+.container-clock {
+
+    text-align: center;
+    ;
+
+}
+
+.container-clock h1 {
+
+    font-size: 2rem;
+    font-weight: 400;
+
+}
+
+.container-clock p {
+
+    font-size: 1.5rem;
+
+}
+
+
+/* Responsive */
+/* *********************************************************************** */
 @media screen and (max-width: 1444px) {
 
   #sidebar-container{
@@ -222,7 +270,25 @@ content {
 
 @media screen and (max-width: 776px) {
 
-  .graphBox, .graphBoxForm {
+  .graphBox {
+
+    grid-template-columns: 1fr;
+    height: auto;
+
+  }
+
+  .graphBoxForm {
+
+    grid-template-columns: 1fr 1fr;
+    height: auto;
+
+  }
+
+}
+
+@media screen and (max-width: 520px) {
+
+  .graphBoxForm {
 
     grid-template-columns: 1fr;
     height: auto;
@@ -231,52 +297,41 @@ content {
 
 }
 
-#sidebar-container .menu {
-
-  width: 18rem;
-
-}
-
-/* Analog clock. */
-.container-clock {
-
-    text-align: center;
-    ;
-
-}
-
-.container-clock h1 {
-
-    font-size: 2rem;
-    font-weight: 400;
-
-}
-
-.container-clock p {
-
-    font-size: 1.5rem;
-
-}
-
 /* Datapicker */
+/* *********************************************************************** */
 input[type="date"], input[type='time'] {
 
-  background-color: var(--light);
+  background-color: transparent;
   padding: 0.75rem;
   color: #6c757d!important;
+  border: transparent;
   border-radius: 20px;
-  border: solid var(--grey);
   font-size: 1.5rem;
   font-weight: 400;
   text-align: center;
+  height: 3rem;
+
+}
+
+input[type='text'], input[type='password'] {
+
+  background-color: var(--light);
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  width: 20vh;
+  height: 1rem;
+  color: #212529!important;
+  border-radius: 20px;
+  border: solid var(--grey);
+  font-size: 1.15rem;
+  font-weight: 400;
+  text-align: left;
 
 }
 
 input[type='submit'] {
 
-  background-color: var(--grey);
-  margin-top: 1.5rem;
-  padding: 0.75rem;
+  background-color: transparent; /* var(--primary); */
   color: #6c757d!important;
   border-radius: 20px;
   border: solid #6c757d!important; 
@@ -284,24 +339,20 @@ input[type='submit'] {
   font-weight: 400;
   text-align: center;
   width: 200px;
+  height: 3rem;
 
 }
 
 input[type='submit']:hover {
 
-  background-color: #6c757d;
-  border: solid var(--grey)!important;
+  background-color: #6c757d!important;
+  border: transparent;
   color: var(--grey)!important;
   width: 200px;
 
 }
 
-::-webkit-calendar-picker-indicator{
-
-  background-color: var(--light);
-  border: solid #6c757d!important;
-  padding: 0,25px;
-  cursor: pointer;
-  border-radius: 10px;
-
+.container {
+  width: 80%;
+  margin: 20px auto;
 }

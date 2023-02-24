@@ -2,353 +2,268 @@
 
 <html lang="en">
 
-<head>
+  <head>
 
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Icons -->
-  <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
-  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <!-- Icons -->
+    <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
-  <!-- CSS stylesheet. -->
-  <link rel="stylesheet" href="static/css/estil.css">
+    <!-- CSS stylesheet. -->
+    <link rel="stylesheet" href="static/css/estil.css">
 
-  <!-- Favicon. -->
-  <link rel="icon" type="image/png" href="static/img/logo_small.png"/>
+    <!-- Favicon. -->
+    <link rel="icon" type="image/png" href="static/img/logo_small.png" />
 
-  <!-- Google fonts. -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Google fonts. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap" rel="stylesheet">
 
-  <title>!ngiottest</title>
+    <title>!ngiottest</title>
 
-</head>
+  </head>
 
-<body>
+  <body>
 
-  <div class="d-flex">
+    <div class="d-flex">
 
-    <div id="sidebar-container"">
-      
-      <!-- Logo -->
-      <div class=" navbar-logo">
-        <picture class="navbar-logo">
-          <source srcset="static/img/logo.png" media="(min-width: 1370px)">
-          <source srcset="static/img/logo_small.png" media="(min-width: 850px)">
-          <img src="static/img/logo.png">
-        </picture>
+      <div id="sidebar-container"">
+
+        <!-- Logo -->
+        <div class=" navbar-logo">
+          <picture class="navbar-logo">
+            <source srcset="static/img/logo.png" media="(min-width: 1370px)">
+            <source srcset="static/img/logo_small.png" media="(min-width: 850px)">
+            <img src="static/img/logo.png">
+          </picture>
+        </div>
+
+        <!-- Information canvas. -->
+        <div class="sidebar-text">
+          <h4>Improve your production</h4>
+        </div>
+
+        <div class="sidebar-text-clock">
+          <h1 id="time">00:00:00</h1>
+          <p id="date">01/01/1901</p>
+          <p id="day">Tuesday</p>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <!-- If user not logged, shows the login form. -->
+        {% if 'username' not in session %}
+          <div class="sidebar-text">
+            <h4 style="margin-bottom: 1rem; text-align: left;">Login</h4>
+            <!-- Login form. -->
+            <form method="POST" action="{{url_for('login')}}">
+              <input name="user" required type="text" placeholder="User" pattern="[A-Za-z0-9!?-]{4,12}">
+              <input name="psw" required type="password" placeholder="Password" pattern="{4,45}">
+              <input type="submit"
+                style="background-color: var(--light); height: 2.5rem;width: 20vh;font-size:1.5rem;text-align:center;margin-bottom: 2rem;padding-top: 0px;padding-bottom: 0px;"
+                value="Login">
+            </form>
+          </div>
+
+        {% else %}
+        <!-- Else shows user information and 'Logout' bottom. -->
+          <div class="sidebar-text">
+            <h4 style="margin-bottom: 1rem; text-align: left;">Welcome {{ username }}</h4>
+            <a href="{{ url_for('logout') }}" class="btn btn-primary">Logout</a>
+          </div>
+
+        {% endif %}
+
+        <hr/>
+        <div class="sidebar-text">
+          <p>correu@ingimec.com</p>
+          <p>123 45 45 45</p>
+          <p>Carrer de les Feixes, Ctra. de Berga, 18-20, Pol. Ind, 0872, Sant Fruitós de Bages, Barcelona
+        </div>
+        <hr/>
+
       </div>
-    
-      <!-- Information canvas. -->
-      <div class="sidebar-text">
-        <h4>Improve your production</h4>
-      </div>
-    
-      <div class="sidebar-text-clock">
-        <h1 id="time">00:00:00</h1>
-        <p id="date">01/01/1901</p>
-        <p id="day">Tuesday</p>
-      </div>
-    
-      <div class="sidebar-text">
-        <p>correu@ingimec.com</p>
-        <p>123 45 45 45</p>
-        <p>Carrer de les Feixes, Ctra. de Berga, 18-20, Pol. Ind, 0872, Sant Fruitós de Bages, Barcelona
-      </div>
-    
-    </div>
 
-    <!-- Navbar -->
-    <div class="w-100">
-      <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="#">Ingiottest</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Graphics</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Data</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Configuration</a>
-              </li>
-              <!--
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false">
-                    Dropdown
-                  </a>
-                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="#">Acción</a></li>
-                    <li><a class="dropdown-item" href="#">Otra acción</a></li>
-                    <li>
-                      <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="#">Algo más aquí</a></li>
-                  </ul>
+      <!-- Navbar -->
+      <div class="w-100">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+          <div class="container-fluid">
+            <a class="navbar-brand" href="#">Ingiottest</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="#">Home</a>
                 </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Graphics</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Data</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Configuration</a>
+                </li>
+                <!-- TODO -->
+                <!--
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        Dropdown
+                      </a>
+                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">Acción</a></li>
+                        <li><a class="dropdown-item" href="#">Otra acción</a></li>
+                        <li>
+                          <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#">Algo más aquí</a></li>
+                      </ul>
+                    </li>
+                  -->
                 <li class="nav-item">
                   <a class="nav-link disabled">Deshabilitado</a>
                 </li>
-              -->
-            </ul>
+                <!-- TODO -->
+              </ul>
+            </div>
           </div>
+        </nav>
+
+        <!-- Web body. -->
+        <div id="content">
+
+          <section class="bodycontent">
+            <div class="container">
+              <div class="row">
+                <h1 class="font-weight-bold">OEE</h1>
+                <p class="lead text-muted">Overall Equipment Effectiveness</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Information grid -->
+          <section class="bodycontent">
+            <div class="container">
+              <div class="graphBox">
+
+                <div class="box">
+                  <canvas id="myChart"></canvas>
+                </div>
+
+                <div class="box">
+
+                  <canvas id="myChart2"></canvas>
+                </div>
+
+                <div class="box">
+                  <canvas id="myChart3"></canvas>
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+          <section class="filterOeeValues">
+            <br>
+            <!-- DB query grid. -->
+            <section class="bodycontent">
+              <div class="container">
+                <div class="row">
+                  <h1 class="font-weight-bold">Filter OEE values</h1>
+                  <p class="lead text-muted">Filter OEE values for data or shift</p>
+                </div>
+              </div>
+            </section>
+
+            <section class="bodycontent" style="text-align:center;">
+              <div class="container">
+                <div class="graphBoxForm">
+                  <div class="box">
+                    <p class="lead text-muted">Select first day:</p>
+                    <input type="date" id="startday" name="startday">
+                  </div>
+                  <div class="box">
+                    <p class="lead text-muted">Select time: </p>
+                    <input type="time" id="starttime" name="starttime">
+                  </div>
+                  <div class="box">
+                    <p class="lead text-muted">Select last day:</p>
+                    <input type="date" id="lastday" name="lastday">
+                  </div>
+                  <div class="box">
+                    <p class="lead text-muted">Select time: </p>
+                    <input type="time" id="starttime" name="starttime">
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="bodycontent" style="text-align:center;">
+              <div>
+                <input type="submit" value="Enviar">
+              </div>
+            </section>
+
+            <section class="bodycontent">
+              <div class="container">
+                <div class="charbox">
+                  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js"></script>
+                  <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js"></script>
+                  <canvas id="myChart4" height="300"></canvas>
+                </div>
+              </div>
+            </section>
+            <br>
+          </section>
+
         </div>
-      </nav>
 
-      <!-- Web body. -->
-      <div id="content">
-
-        <section class="bodycontent">
-          <div class="container">
-            <div class="row">
-
-              <h1 class="font-weight-bold">OEE</h1>
-              <p class="lead text-muted">Overall Equipment Effectiveness</p>
-
-            </div>
-          </div>
-        </section>
-
-        <!-- Information grid -->
-        <section class="bodycontent">
-          <div class="container">
-            <div class="graphBox">
-
-              <div class="box">
-                <canvas id="myChart"></canvas>
-              </div>
-
-              <div class="box">
-
-                <canvas id="myChart2"></canvas>
-              </div>
-
-              <div class="box">
-                <canvas id="myChart3"></canvas>
-              </div>
-
-            </div>
-          </div>
-        </section>
-
-        <!-- DB query grid. -->
-        <section class="bodycontent">
-          <div class="container">
-            <div class="row">
-              <h1 class="font-weight-bold">Filter OEE values</h1>
-              <p class="lead text-muted">Filter OEE values for data or shift</p>
-            </div>
-          </div>
-        </section>
-
-        <section class="bodycontent">
-          <div class="container">
-            <div class="box">
-              <canvas id="myChart4" height="100"></canvas>
-            </div>
-          </div>
-        </section>
-
-        <!--
-        <section class="bodycontent" style="text-align:center;">
-          <div class="container">
-            <div class="graphBoxForm">
-              <div class="box">
-                <p class="lead text-muted">Select first day:</p>
-                <input type="date" id="startday" name="startday">
-              </div>
-              <div class="box">
-                <p class="lead text-muted">Select time: </p>
-                <input type="time" id="starttime" name="starttime">
-              </div>
-              <div class="box">
-                <p class="lead text-muted">Select last day:</p>
-                <input type="date" id="lastday" name="lastday">
-              </div>
-              <div class="box">
-                <p class="lead text-muted">Select time: </p>
-                <input type="time" id="starttime" name="starttime">
-              </div>
-            </div>
-          </div>
-        </section>
-        -->
-        <section class="bodycontent" style="text-align:center;">
-          <div>
-            <input type="submit" value="Enviar">
-          </div>
-        </section>
-
-        <section class="bodycontent" style="text-align:center;">
-          <div class="container">
-            <div class="graphBoxForm">
-              <div class="box">
-                <p class="lead text-muted">Select first day:</p>
-                <input type="date" id="startday" name="startday">
-              </div>
-              <div class="box">
-                <p class="lead text-muted">Select time: </p>
-                <input type="time" id="starttime" name="starttime">
-              </div>
-              <div class="box">
-                <p class="lead text-muted">Select last day:</p>
-                <input type="date" id="lastday" name="lastday">
-              </div>
-              <div class="box">
-                <p class="lead text-muted">Select time: </p>
-                <input type="time" id="starttime" name="starttime">
-              </div>
-            </div>
-          </div>
-        </section>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        
       </div>
+    
     </div>
-  </div>
 
 
-  <!-- jQuery -->
-  <script crossorigin="anonymous" integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f"
-    src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <!-- jQuery -->
+    <script crossorigin="anonymous" integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f"
+      src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 
-  <!-- Option 1: Bootstrap Bundle with Popper -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-    crossorigin="anonymous"></script>
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+      crossorigin="anonymous"></script>
 
-  <!-- Clock time. -->
-  <script src="static/js/clock.js"></script>
+    <!-- Clock time. -->
+    <script src="static/js/clock.js"></script>
 
-  <!-- Gràfiques -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="static/js/chartjs.js"></script>
+    <!-- Gràfiques -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="static/js/chartjs.js"></script>
+    <!-- TODO
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    TODO -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0-rc.1/chartjs-plugin-datalabels.min.js" integrity="sha512-+UYTD5L/bU1sgAfWA0ELK5RlQ811q8wZIocqI7+K0Lhh8yVdIoAMEs96wJAIbgFvzynPm36ZCXtkydxu1cs27w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-  <!-- Call chart.js function to plot the graphs. -->
-  <script>
-    chartOEE({{ valuesOee | tojson | safe }});
-    chartOkNok({{ valuesOkNok | tojson | safe }});
-    chartMachinesStatus({{ valuesMachines | tojson | safe }});
-    chart4plot({{ values4char | tojson | safe}});
-  </script>
+    <!-- Call chart.js function to plot the graphs. -->
+    <script>
+      chartOEE({{ valuesOee | tojson | safe }});
+      chartOkNok({{ valuesOkNok | tojson | safe }});
+      chartMachinesStatus({{ valuesMachines | tojson | safe }});
+      chart4plot({{ values4char | tojson | safe}});
+    </script>
 
-</body>
+  </body>
 
 </html>
