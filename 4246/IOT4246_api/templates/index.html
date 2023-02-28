@@ -28,6 +28,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap" rel="stylesheet">
 
+    <!-- Reload page each x time. -->
+    <!-- <meta http-equiv="refresh" content="10"> -->
+
     <title>!ngiottest</title>
 
   </head>
@@ -163,13 +166,17 @@
                 </div>
 
                 <div class="box">
-
                   <canvas id="myChart2"></canvas>
                 </div>
 
+                <!--
+                  TODO
+                  -----
                 <div class="box">
                   <canvas id="myChart3"></canvas>
                 </div>
+                __>
+
 
               </div>
             </div>
@@ -250,17 +257,14 @@
     <!-- Gràfiques -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="static/js/chartjs.js"></script>
-    <!-- TODO
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
-    TODO -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0-rc.1/chartjs-plugin-datalabels.min.js" integrity="sha512-+UYTD5L/bU1sgAfWA0ELK5RlQ811q8wZIocqI7+K0Lhh8yVdIoAMEs96wJAIbgFvzynPm36ZCXtkydxu1cs27w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- Call chart.js function to plot the graphs. -->
     <script>
-      chartOEE({{ valuesOee | tojson | safe }});
-      chartOkNok({{ valuesOkNok | tojson | safe }});
-      chartMachinesStatus({{ valuesMachines | tojson | safe }});
+      actualizarGraficoOee()
+      actualizarGraficoPieces()
+      // chartMachinesStatus({{ valuesMachines | tojson | safe }});
+
       chart4plot({{ values4char | tojson | safe}});
     </script>
 
