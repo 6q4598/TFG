@@ -102,7 +102,10 @@ class oee():
         current_time = datetime.now().strftime("%H:%M:%S")
 
         # Select started hour from current shift.
-        if (current_time >= '06:00:00' and current_time < '22:00:00'):
+        if (time.strftime("%A") == "Saturday" and current_time < "06:00:00"):
+            sql_query = "SELECT MAX(Start_time) FROM table_shifts WHERE days LIKE '%Friday%'";
+            print(sql_query)
+        elif (current_time >= '06:00:00' and current_time < '22:00:00'):
             sql_query = "SELECT Start_time FROM table_shifts WHERE days LIKE '%{}%' AND Start_time <= '{}' AND End_time > '{}'".format(
                 time.strftime("%A"), current_time, current_time)
         else:
@@ -122,7 +125,10 @@ class oee():
         """
         current_time = datetime.now().strftime("%H:%M:%S")
 
-        if (current_time >= '06:00:00' and current_time < '22:00:00'):
+        if (time.strftime("%A") == "Saturday" and current_time < "06:00:00"):
+            sql_query = "SELECT MIN(Start_time) FROM table_shifts WHERE days LIKE '%Saturday%'";
+            print(sql_query)
+        elif (current_time >= '06:00:00' and current_time < '22:00:00'):
             sql_query = "SELECT End_time FROM table_shifts WHERE Days LIKE '%{}%' AND Start_time <= '{}' AND End_time > '{}'".format(
                 time.strftime("%A"), current_time, current_time)
         else:

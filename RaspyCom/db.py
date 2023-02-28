@@ -19,6 +19,7 @@ class db():
         self
 
     def write_to_db(self, connection, cursor, query):
+        result = None
         try:
            cursor.execute(query)
            connection.commit()
