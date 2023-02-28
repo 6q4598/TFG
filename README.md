@@ -587,3 +587,13 @@ dieseny layout antic
 
 
 	
+
+APUNTS API REST RASPBERRY PI
+============================
+
+REQUERIMENTS
+-------------
+- Python 3
+- Flask
+- Les següentes eines per a Flask, Python i JavaScript:
+
