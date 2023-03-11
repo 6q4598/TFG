@@ -53,32 +53,32 @@ SOCKET CONNECTION AND TRANSFERING ESP32 -> PYTHON SOCKET SERVER LINUX
 '''
 
 def main():
-	
+
 	# Configure the socket.
 	s = socket.socket()
-	
+
 	# s.bind(("192.168.1.107", 4554))
 	s.bind(("0.0.0.0", 4554))
-	
+
 	# Start the listening.
 	s.listen(3)
 
 	# At the same time, connects the program to the BD to later save the values sended by ESP32.
 	connection = sqlite3.connect(db_path)
 	cursor = connection.cursor()
-	
+
 	while True:
-	
+
 		# Accept the server.
 		client, addr = s.accept();
-	
+
 		while True:
-	
+
 			content = client.recv(600);
-	
+
 			if (len(content) <= 0):
 				break
-	
+
 			if ("DI1" in str(content)):
 				print("Content:\n", content, "\n--- --- ---")
 				print("\n==================================\n")
@@ -87,8 +87,8 @@ def main():
 				print(type(content))
 				insert_query_db(connection, cursor, query_db)
 				print("\n==================================\n")
-	
-	
+
+
 		print("Client desconnected.")
 		client.close()
 

@@ -30,13 +30,13 @@ values4char = []
 def verify_login_before():
     """
     Verify that the user is logged in.
-    """ 
+    """
     route = request.path
     if 'username' in session:
         print("USERNAME IS LOGGED")
     else:
         print("NOT LOGGED USERNAME")
-    # return '0' if 'username' in session else '1' 
+    # return '0' if 'username' in session else '1'.
 
 @app.route('/', methods = ['GET', 'POST'])
 @app.route('/login', methods = ['GET'])
@@ -68,7 +68,7 @@ def index():
     ##############################
 
     return render_template("index.html", valuesOee = valuesOee, valuesOkNok = valuesOkNok, valuesMachines = valuesMachines, values4char = values4char)
-    # , form = login_form) 
+    # , form = login_form)
 
 
 ###################################################
@@ -80,12 +80,12 @@ def login():
     """
     Login view.
     -----------
-    Tests: 
+    Tests:
     .......
     """
     username = request.form.get("user")
     psw = request.form.get("psw")
-    session['username'] = username 
+    session['username'] = username
     print("User '" + username + "' has been logged correctly.")
     return(redirect(url_for('index')))
 
