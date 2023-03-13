@@ -26,6 +26,15 @@ def read_db():
             if (client.get_connected()):
                 read_db = client.db_read(91, 0, 2)
                 read_db_bin = convert_byte_to_bit(read_db)
+                print(read_db)
+                print(type(read_db_bin))
+                if (read_db_bin[-9] == '1'):
+                    print("OKAY")
+                if (read_db_bin[-10] == '1'):
+                    print("NO OKAY")
+                else:
+                    print("Else")
+                """
                 if ((fabricated == False) and (int(read_db_bin[-9]) == 1) or (int(read_db_bin[-10]) == 1)):
                     print("PIECE FABRICATED")
                     fabricated = True
@@ -44,6 +53,7 @@ def read_db():
                 else:
                     pass
                 db_values.update({'Auto':int(read_db_bin[-1]), 'Man':int(read_db_bin[-2]), 'Auditoria':int(read_db_bin[-3]), 'Error':int(read_db_bin[-4]), 'Ok':num_ok, 'Nok':num_nok, 'Error':[]}) # int(read_db_bin[-9]), int(read_db_bin[-10]),
+                """
             else:
                 print("PLC disconnected.")
         except Exception as e:
