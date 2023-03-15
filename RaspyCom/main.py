@@ -31,6 +31,40 @@ OEE FUNCTIONS
 """
 
 """
+.......................................
+Get the total time of the current shift.
+.......................................
+"""
+def get_start_shift_hour(sql_connection, sql_cursor):
+    """
+    Function that returns the start hour of the current shift.
+    Current shift is determine dy the day of the week and the time we are in.
+    """
+    sql_query = "SELECT TODO FROM table_shift WHERE days LIKE '%{}%' AND Start_hour < '{}' AND End_hour > '{}'".format(
+        time.strftime("%A"), current_hour, time.strftime("%H:%M:%S"), time.strftime("%H:%M:%S")
+    )
+    try:
+        sql_cursor.execute(sql_query)
+        sql_connection.commit()
+    except sqlite3.OperationalError as e:
+        print("Error to get the start time of the shift. Error: ", e)
+
+def get_start_shift_hour(sql_connection, sql_cursor):
+    """
+    Function that returns the start hour of the current shift.
+    Current shift is determine dy the day of the week and the time we are in.
+    """
+    sql_query = "SELEC TODO FROM table_shift WHERE days LIKE '%{}%' AND Start_hour < '{}' AND End_hour > '{}'".format(
+        time.strftime("%A"), current_hour, time.strftime("%H:%M:%S"), time.strftime("%H:%M:%S")
+    )
+    try:
+        sql_cursor.execute(sql_query)
+        sql_connection.commit()
+    except sqlite3.OperationalError as e:
+        print("Error to get the start time of the shift. Error: ", e)
+
+
+"""
 ---------------------------------------
 COMPLEMENTARY FUNCTIONS
 ---------------------------------------

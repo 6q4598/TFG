@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\libraries",
+    "\\libraries\\ESP32_AzureIoT_Arduino-master",
+    "\\libraries\\ESP32_AzureIoT_Arduino-master\\src",
+    "\\libraries\\EspMQTTClient",
+    "\\libraries\\EspMQTTClient\\src"
+  ],
+  "SelectedNode": "\\libraries\\EspMQTTClient\\src\\ESP32HTTPUpdateServer.h",
+  "PreviewInSolutionExplorer": false
+}
