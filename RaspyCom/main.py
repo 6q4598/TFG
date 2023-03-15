@@ -30,11 +30,9 @@ OEE FUNCTIONS
 ---------------------------------------
 """
 
-"""
-.......................................
-Get the total time of the current shift.
-.......................................
-"""
+# Get the total time of the current shift.
+# Get: Start hour, end hour, total number of hours of the current shift.
+# Get: The number of hours until now in the current shift.
 def get_start_shift_hour(sql_connection, sql_cursor):
     """
     Function that returns the start hour of the current shift.
