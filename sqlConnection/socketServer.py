@@ -23,31 +23,31 @@ print("""
 JSON DICTIONARY PYTHON
 '''
 def convert_json_to_query(json_msg):
-	# Convert json_msg to dictionary.
-	print(type(json_msg))
-	print("___", json_msg, "___");
-	json_d = json.loads(json_msg)
+    # Convert json_msg to dictionary.
+    print(type(json_msg))
+    print("___", json_msg, "___");
+    json_d = json.loads(json_msg)
 
-	# Create 3 string for columns and her values.
-	columns = ""
-	values = ""
-	for key, value in json_d.items():
+    # Create 3 string for columns and her values.
+    columns = ""
+    values = ""
+    for key, value in json_d.items():
 
-		columns += key + ","
-		values += value + ","
+        columns += key + ","
+        values += value + ","
 
-	# Create query.
-	return "INSERT INTO esp32_table (" + columns[:-1] + ") VALUES (" + values[:-1] + ")"
+    # Create query.
+    return "INSERT INTO esp32_table (" + columns[:-1] + ") VALUES (" + values[:-1] + ")"
 
 def insert_query_db(con, cursor, query):
-	try:
-		cursor.execute(query)
-		con.commit()
-		print("Query inserted correctly in DB.");
-		return True
-	except Exception as ex:
-		print("AN ERROR OCURRED: ", ex)
-		return False
+    try:
+        cursor.execute(query)
+        con.commit()
+        print("Query inserted correctly in DB.");
+        return True
+    except Exception as ex:
+        print("AN ERROR OCURRED: ", ex)
+        return False
 
 '''
 SOCKET CONNECTION AND TRANSFERING ESP32 -> PYTHON SOCKET SERVER LINUX
@@ -55,47 +55,47 @@ SOCKET CONNECTION AND TRANSFERING ESP32 -> PYTHON SOCKET SERVER LINUX
 
 def main():
 
-	# Configure the socket.
-	s = socket.socket()
+    # Configure the socket.
+    s = socket.socket()
 
-	# s.bind(("192.168.1.107", 4554))
-	s.bind(("0.0.0.0", 4554))
+    # s.bind(("192.168.1.107", 4554))
+    s.bind(("0.0.0.0", 4554))
 
-	# Start the listening.
-	s.listen(3)
+    # Start the listening.
+    s.listen(3)
 
-	# At the same time, connects the program to the BD to later save the values sended by ESP32.
-	connection = sqlite3.connect(db_path)
-	cursor = connection.cursor()
+    # At the same time, connects the program to the BD to later save the values sended by ESP32.
+    connection = sqlite3.connect(db_path)
+    cursor = connection.cursor()
 
-	while True:
+    while True:
 
-		# Accept the server.
-		client, addr = s.accept();
+        # Accept the server.
+        client, addr = s.accept();
 
-		while True:
+        while True:
 
-			content = client.recv(600);
+            content = client.recv(600);
 
-			if (len(content) <= 0):
-				break
+            if (len(content) <= 0):
+                break
 
-			if ("DI1" in str(content)):
-				print("Content:\n", content, "\n--- --- ---")
-				print("\n==================================\n")
-				print(convert_json_to_query(content))
-				query_db = convert_json_to_query(content)
-				print(type(content))
-				insert_query_db(connection, cursor, query_db)
-				print("\n==================================\n")
+            if ("DI1" in str(content)):
+                print("Content:\n", content, "\n--- --- ---")
+                print("\n==================================\n")
+                print(convert_json_to_query(content))
+                query_db = convert_json_to_query(content)
+                print(type(content))
+                insert_query_db(connection, cursor, query_db)
+                print("\n==================================\n")
 
 
-		print("Client desconnected.")
-		client.close()
+        print("Client desconnected.")
+        client.close()
 
 # ----------------------------------------------------------------------------- #
 # MAIN PROGRAM                                                                  #
 # Executed only if the script has been executed as the main program.            #
 # ----------------------------------------------------------------------------- #
 if __name__ == "__main__":
-        main()
+    main()
