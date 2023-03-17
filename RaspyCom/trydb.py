@@ -3,15 +3,15 @@
 
 import sys
 import time
+import sqlite3
 import snap7
 from snap7 import util
 from threading import *
 
-# Dictionary where to save the values readed from the PLC.
 db_values = {'Auto': 0, 'Man': 0, 'Auditoria': 0, 'Error': 0, 'Ok': 0, 'Nok': 0, 'Error': []}
-
 fabricated = False
 num_ok = num_nok = 0
+sql_path = "/media/rpiiot/CCCOMA_X64F/4246_IOT.db"
 
 def convert_byte_to_bit(buffer):
     # return bin(int.from_bytes((bytearray(b'\x00\x00\x01') or buffer), byteorder=sys.byteorder)).format(12)
@@ -63,7 +63,14 @@ def read_db():
     # Set a runtime delay.
     time.sleep(0.055)
 
-read_db()
+# read_db()
+
+print(sql_path)
+# sql_connection = sqlite3.connect(sql_path)
+# sql_cursor = sql_connection.cursor()
+sql_query = "SELEC TODO FROM table_shift WHERE days LIKE '%{}%' AND Start_hour < '{}' AND End_hour > '{}'".format(
+    time.strftime("%A"), time.strftime("%H:%M:%S"), time.strftime("%H:%M:%S"))
+print(sql_query)
 
 """
 while True:

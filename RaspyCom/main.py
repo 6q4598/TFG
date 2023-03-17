@@ -11,12 +11,14 @@ from snap7 import util
 from threading import *
 
 # Dictionary where to save the values readed from the PLC.
-db_values = {'Auto': 0, 'Man': 0, 'Audit': 0, 'Error': 0, 'Maintenance': 0, 'Ok': 0, 'Nok': 0, 'ErrorCodes': '0'}
+db_values = {'Auto': 0, 'Man': 0, 'Audit': 0, 'Error': 0, 'Maintenance': 0, 'Ok': 0, 'Nok': 0, 'ErrorCodes': ''}
 
 # Global variables to create flags and saved number created pieces.
-writing_sql = False
+# TODO: writing_sql = False
 num_ok = num_nok = 0
 fabricated_ok = fabricated_nok = False
+db_sleep = 10
+plc_sleep = 0.030
 
 # SQLite3 PATH and creation table strings.
 sql_path = "/media/rpiiot/CCCOMA_X64F/4246_IOT.db"
@@ -28,17 +30,34 @@ create_table_oee = "CREATE TABLE table_oee (Date TIME, Hour TIME, Oee REAL, Avai
 ---------------------------------------
 OEE FUNCTIONS
 ---------------------------------------
+- Get the total time of the current shift.
+- Get: Start hour, end hour, total number of hours of the current shift.
+- Get: The number of hours until now in the current shift.
+- Get: The number of intervals has passed.
+---------------------------------------
 """
+def get_count_num_intervals(sql_connection, sql_cursor):
+    """
+    Function that returns the number of intervals has passed.
+    Consider the time between two intervals the time elapsed between the writing
+    of two records in the database.
+    We can get the toal time elapsed by multiplying the number of intervals that have
+    passed since the start of shift by the time that elapses between writing 2 records
+    to the database.
+    """
+    sql_query = "SELECT COUNT(*) FROM table_plc WHERE Hour > {} AND Hour < {} AND Date = '{}'".format(
+        get_start_shift_hour(sql_connection, sql_cursor),
+        get_start_end_hour(sql_connection, sql_cursor),
+        time.strftime("%D")
+    )
 
-# Get the total time of the current shift.
-# Get: Start hour, end hour, total number of hours of the current shift.
-# Get: The number of hours until now in the current shift.
+
 def get_start_shift_hour(sql_connection, sql_cursor):
     """
     Function that returns the start hour of the current shift.
     Current shift is determine dy the day of the week and the time we are in.
     """
-    sql_query = "SELECT TODO FROM table_shift WHERE days LIKE '%{}%' AND Start_hour < '{}' AND End_hour > '{}'".format(
+    sql_query = "SELECT TODO FROM table_shifts WHERE days LIKE '%{}%' AND Start_time < '{}' AND End_time > '{}'".format(
         time.strftime("%A"), current_hour, time.strftime("%H:%M:%S"), time.strftime("%H:%M:%S")
     )
     try:
@@ -52,7 +71,7 @@ def get_start_shift_hour(sql_connection, sql_cursor):
     Function that returns the start hour of the current shift.
     Current shift is determine dy the day of the week and the time we are in.
     """
-    sql_query = "SELEC TODO FROM table_shift WHERE days LIKE '%{}%' AND Start_hour < '{}' AND End_hour > '{}'".format(
+    sql_query = "SELECT TODO FROM table_shifts WHERE days LIKE '%{}%' AND Start_time < '{}' AND End_time > '{}'".format(
         time.strftime("%A"), current_hour, time.strftime("%H:%M:%S"), time.strftime("%H:%M:%S")
     )
     try:
@@ -113,9 +132,12 @@ def create_tables(sql_cursor):
     """
     Create a database if not exists.
     """
-    sql_cursor.execute(create_table_plc)
-    sql_cursor.execute(create_table_shifts)
-    sql_cursor.execute(create_table_oee)
+    try:
+        sql_cursor.execute(create_table_plc)
+        sql_cursor.execute(create_table_shifts)
+        sql_cursor.execute(create_table_oee)
+    except:
+        print("Creating tables error. Error: ", e)
 
 """
 ---------------------------------------
@@ -144,25 +166,28 @@ def write_sql():
         create_tables(sql_cursor)
 
     while True:
+        # Save current PLC values and reset values for read DB again. WARNING: python memory when «=».!!!
+        db_values_temp = {'Auto': db_values['Auto'], 'Man': db_values['Man'], 'Audit': db_values['Audit'],
+                          'Error': db_values['Error'], 'Maintenance': db_values['Maintenance'],
+                          'Ok': db_values['Ok'], 'Nok': db_values['Nok'], 'ErrorCodes': db_values['ErrorCodes']}
+        num_ok_temp = num_ok
+        num_nok_temp = num_nok
+        db_values.update({'Auto' : 0, 'Man' : 0, 'Audit' : 0, 'Error' : 0, 'Maintenance': 0, 'Ok' : 0, 'Nok' : 0, 'ErrorCodes' : '' })
+        num_ok = 0
+        num_nok = 0
+        print(num_ok, " --------- ", num_ok_temp)
+        print(num_nok, " --------- ", num_nok_temp)
+
         # Start writing data to the SQL.
-        writing_sql = True
-        print("--- ", db_values, " ---")
         # TODO: Falta afegir els valors per a la columna Errors (DB 100).
         sql_query = "INSERT INTO table_plc (Date,Hour,Auto,Manual,Audit,Error,Maintenance,Ok,Nok) VALUES ('{}','{}',{},{},{},{},{},{},{})".format(
-            datetime.today().strftime('%d/%m/%Y'), datetime.today().strftime('%H:%M:%S'),
-            db_values['Auto'], db_values['Man'], db_values['Audit'], db_values['Error'],
-            db_values['Maintenance'], db_values['Ok'], db_values['Nok'] # TODO: db_values['Error']
-        )
+            datetime.today().strftime('%D'), datetime.today().strftime('%H:%M:%S'),
+            db_values_temp['Auto'], db_values_temp['Man'], db_values_temp['Audit'], db_values_temp['Error'],
+            db_values_temp['Maintenance'], num_ok_temp, num_nok_temp) # TODO: db_values_temp['Error'])
 
         # Insert values readed from the PLC to the database.
         write_values_sql(sql_connection, sql_cursor, sql_query)
-
-        # Reset values for read DB again.
-        db_values.update({'Auto' : 0, 'Man' : 0, 'Audit' : 0, 'Error' : 0, 'Ok' : 0, 'Nok' : 0, 'Error' : [] })
-        writing_sql = False
-        num_ok = 0
-        num_nok = 0
-        time.sleep(10)
+        time.sleep(db_sleep)
 
 def read_plc():
     """
@@ -171,10 +196,6 @@ def read_plc():
     global num_ok, num_nok, fabricated_ok, fabricated_nok
 
     while True:
-
-        # If the program is writing to the database, start the loop again.
-        if writing_sql == True:
-            continue
 
         client = snap7.client.Client()
 
@@ -189,17 +210,16 @@ def read_plc():
                 count_pieces(int(read_plc_bin[10]), int(read_plc_bin[9]))
                 db_values.update({'Auto': int(read_plc_bin[-1]), 'Man': int(read_plc_bin[-2]), 'Audit': int(read_plc_bin[-3]),
                                   'Error': int(read_plc_bin[-4]), 'Maintenance': int(read_plc_bin[-5]), 'Ok': num_ok,
-                                  'Nok': num_nok, 'ErrorCodes': ''}
-                                 )
-
+                                  'Nok': num_nok, 'ErrorCodes': ''})
             else:
                 print("PLC disconnected.")
 
         except Exception as e:
+            print("Error connection PLC. Error: ", e)
             continue
 
         # Set a runtime delay.
-        time.sleep(0.030)
+        time.sleep(plc_sleep)
 
 """
 ---------------------------------------
