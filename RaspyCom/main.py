@@ -6,6 +6,7 @@ import time
 import snap7
 import sqlite3
 import os
+import OEE
 from datetime import datetime
 from snap7 import util
 from threading import *
@@ -226,7 +227,6 @@ def read_plc():
 MAIN PROGRAM
 ---------------------------------------
 """
-
 def main():
     """
     Main program.
@@ -243,4 +243,6 @@ def main():
 
 if __name__ == "__main__":
     print("RASPY-COM\n-----------")
-    main()
+    ao = OEE.OEE(10)
+    print(" ----------------  ", ao.num_iterations)
+    # main()
