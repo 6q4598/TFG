@@ -6,7 +6,7 @@ import time
 import snap7
 import sqlite3
 import os
-import OEE
+from OEE import OEE
 from datetime import datetime
 from snap7 import util
 from threading import *
@@ -53,11 +53,9 @@ def count_pieces(piece_ok, piece_nok):
     if ((fabricated_ok == False) and (piece_ok == 1)):
         fabricated_ok = True
         num_ok += 1
-        print(num_ok, " <<<")
     if ((fabricated_nok == False) and (piece_nok == 1)):
         fabricated_nok = True
         num_nok += 1
-        print(num_nok, " <<<")
     if ((fabricated_ok == True) and (piece_ok == 0)):
         fabricated_ok = False
     if ((fabricated_nok == True) and (piece_nok == 0)):
@@ -67,7 +65,6 @@ def write_values_sql(sql_connection, sql_cursor, sql_query):
     """
     Insert values. Executes «sql_query».
     """
-    print(sql_query)
     try:
         sql_cursor.execute(sql_query)
         sql_connection.commit()
@@ -85,6 +82,63 @@ def create_tables(sql_cursor):
     except:
         print("Creating tables error. Error: ", e)
 
+def write_plc_values(sql_connection, sql_cursor):
+    """
+    PLC VALUES WRITING DB.
+    Write the values readed from PLC to the «table_plc» database table. Also reset values for read
+    PLC again.
+    """
+    global num_ok, num_nok
+
+    # WARNING: python position memory when «=».!!!
+    db_values_temp = {'Auto': db_values['Auto'], 'Man': db_values['Man'], 'Audit': db_values['Audit'],
+                      'Error': db_values['Error'], 'Maintenance': db_values['Maintenance'],
+                      'Ok': db_values['Ok'], 'Nok': db_values['Nok'], 'ErrorCodes': db_values['ErrorCodes']}
+    num_ok_temp = num_ok
+    num_nok_temp = num_nok
+    print("Num peces OK: {}\nNum peces NOK: {}".format(num_ok, num_nok))
+
+    db_values.update({'Auto' : 0, 'Man' : 0, 'Audit' : 0, 'Error' : 0, 'Maintenance': 0, 'Ok' : 0, 'Nok' : 0, 'ErrorCodes' : '' })
+    num_ok = 0
+    num_nok = 0
+
+    # Start writing data to SQL.
+    # TODO: Falta afegir els valors per a la columna Errors (DB 100).
+    sql_query_plc = "INSERT INTO table_plc (Date,Hour,Auto,Manual,Audit,Error,Maintenance,Ok,Nok) VALUES ('{}','{}',{},{},{},{},{},{},{})".format(
+        datetime.today().strftime('%D'), datetime.today().strftime('%H:%M:%S'),
+        db_values_temp['Auto'], db_values_temp['Man'], db_values_temp['Audit'], db_values_temp['Error'],
+        db_values_temp['Maintenance'], num_ok_temp, num_nok_temp) # TODO: db_values_temp['Error'])
+    write_values_sql(sql_connection, sql_cursor, sql_query_plc)
+
+def write_oee_values(sql_connection, sql_cursor, object_oee, f_maintenance, f_error):
+    """
+    OEE VALUES WRITING DB.
+    Write the OEE calculated values to the «table_oee» database table.
+    If the current time not in range of shift, the shift has changed. Reset OEE values and get new range for new shift.
+    """
+    # TODO: if (datetime.today().strftime("%H:%M:%S") in range(object_oee.start_shift_time, object_oee.end_shift_time) == False):
+    current_hour = datetime.today().strftime("%H:%M:%S")
+    if ((current_hour >= object_oee.start_shift_time) and (current_hour < object_oee.end_shift_time)):
+        object_oee.reset_values()
+        object_oee.get_start_shift_time()
+        object_oee.get_end_shift_time()
+        object_oee.get_break_shift_time()
+
+    object_oee.sum_iteration()
+
+    # if (db_values_temp['Maintenance'] == 1):
+    if (f_maintenance == 1):
+        object_oee.sum_maintenance()
+
+    # if (db_values_temp['Error'] == 1):
+    if (f_error == 1):
+        object_oee.sum_error()
+
+    sql_query_oee = "INSERT INTO table_oee (Date, Hour, Oee, Availability, Performance, Quality) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
+        datetime.today().strftime("%D"), datetime.today().strftime("%H:%M:%S"),
+        object_oee.get_oee(), object_oee.get_availability(), object_oee.get_performance(), object_oee.get_quality())
+    write_values_sql(sql_connection, sql_cursor, sql_query_oee)
+
 """
 ---------------------------------------
 THREADS FUNCTIONS
@@ -95,15 +149,15 @@ def write_sql():
     Write the values readed from PLC and saves it in the dictionary «db_values» in the database.
     Write in the database the values readed from PLC and saved in the dictionary «db_values». Then, reset «db_values» values.
     """
-    global fabricated, num_ok, num_nok
+    global num_ok, num_nok
 
     # Start DB connection. If the database not exists, create tables.
     if (os.path.exists(sql_path)):
-        print("Connect to the database.")
+        print("Connected to the database.")
         sql_connection = sqlite3.connect(sql_path)
         sql_cursor = sql_connection.cursor()
     else:
-        print("Create database.")
+        print("Creating database.")
         sql_connection = sqlite3.connect(sql_path)
         sql_cursor = sql_connection.cursor()
         create_tables(sql_cursor)
@@ -114,47 +168,11 @@ def write_sql():
     current_oee.get_end_shift_time()
 
     while True:
-        # PLC VALUES WRITING DB.
-        # Save current PLC values and reset values for read DB again. WARNING: python position memory when «=».!!!
-        db_values_temp = {'Auto': db_values['Auto'], 'Man': db_values['Man'], 'Audit': db_values['Audit'],
-                          'Error': db_values['Error'], 'Maintenance': db_values['Maintenance'],
-                          'Ok': db_values['Ok'], 'Nok': db_values['Nok'], 'ErrorCodes': db_values['ErrorCodes']}
-        num_ok_temp = num_ok
-        num_nok_temp = num_nok
-        db_values.update({'Auto' : 0, 'Man' : 0, 'Audit' : 0, 'Error' : 0, 'Maintenance': 0, 'Ok' : 0, 'Nok' : 0, 'ErrorCodes' : '' })
-        num_ok = 0
-        num_nok = 0
-
-        # Start writing data to SQL.
-        # TODO: Falta afegir els valors per a la columna Errors (DB 100).
-        sql_query_plc = "INSERT INTO table_plc (Date,Hour,Auto,Manual,Audit,Error,Maintenance,Ok,Nok) VALUES ('{}','{}',{},{},{},{},{},{},{})".format(
-            datetime.today().strftime('%D'), datetime.today().strftime('%H:%M:%S'),
-            db_values_temp['Auto'], db_values_temp['Man'], db_values_temp['Audit'], db_values_temp['Error'],
-            db_values_temp['Maintenance'], num_ok_temp, num_nok_temp) # TODO: db_values_temp['Error'])
-        write_values_sql(sql_connection, sql_cursor, sql_query_plc)
-
-        # OEE VALUES WRITING DB.
-        # If the current time not in range of shift, the shift has changed. Reset OEE values and get new range for new shift.
-        if (datetime.today().strftime("%H:%M:%S") in range(current_oee.start_shift_time, current_oee.end_shift_time) == False):
-            current_oee.reset_values()
-            current_oee.get_start_shift_time()
-            current_oee.get_end_shift_time()
-            current_oee.get_break_shift_time()
-
-        current_oee.sum_iteration()
-
-        if (db_values_temp['Maintenance'] == 1):
-            current_oee.sum_maintenance()
-
-        if (db_values_temp['Error'] == 1):
-            current_oee.sum_error()
-
-        sql_query_oee = "INSERT INTO table_oee (Date, Hour, Oee, Availability, Performance, Quality) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
-            datetime.today().strftime("%D"), datetime.today().strftime("%H:%M:%S"),
-            current_oee.get_oee(), current_oee.get_availability(), current_oee.get_performance(), current_oee.get_quality())
-        write_values_sql(sql_connection, sql_cursor, sql_query_plc)
-
-        # Insert values readed from the PLC to the database.
+        f_maintenance = db_values['Maintenance']
+        f_error = db_values['Error']
+        # Insert PLC and OEE values in the database.
+        write_plc_values(sql_connection, sql_cursor)
+        write_oee_values(sql_connection, sql_cursor, current_oee, f_maintenance, f_error)
         time.sleep(db_sleep)
 
 def read_plc():
@@ -170,8 +188,9 @@ def read_plc():
         try:
             client.connect('192.168.0.1', 0, 0)
 
+            # If client is connected to the PLC, read DB and converts it to a bit array.
             if (client.get_connected()):
-                # If client is connected to the PLC, read DB and converts it to bit array.
+                print("PLC connected.")
                 read_plc = client.db_read(91, 0, 2)
                 read_plc_bin = convert_byte_to_bit(read_plc)
                 # Then, count pieces and write it to the dictionary «db_values».
@@ -180,7 +199,7 @@ def read_plc():
                                   'Error': int(read_plc_bin[-4]), 'Maintenance': int(read_plc_bin[-5]), 'Ok': num_ok,
                                   'Nok': num_nok, 'ErrorCodes': ''})
             else:
-                print("PLC disconnected.")
+                print("PLC disconnected. Trying to reconect")
 
         except Exception as e:
             print("Error connection PLC. Error: ", e)
@@ -199,12 +218,12 @@ def main():
     Main program.
     Start connection to the SQLITE3.
     Call 2 trheads running concurrently in an infinite loop.
-        - read_plc()
-        - write_sql().
+        - read_plc(): write the readed PLC values and caculated OEE parameters to the DB.
+        - write_sql(): read the values from PLC and saves it in the «db_values» dictionary.
     """
     # Create and start threats.
     read_plc_thread = Thread(target = read_plc)
-    write_sql_thread = Timer(3, function = write_sql) # TODO: , args = (sql_connection, sql_cursor))
+    write_sql_thread = Timer(10, function = write_sql) # TODO: , args = (sql_connection, sql_cursor))
     read_plc_thread.start()
     write_sql_thread.start()
 
