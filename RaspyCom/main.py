@@ -14,12 +14,13 @@ from threading import *
 # Dictionary where to save the values readed from the PLC.
 db_values = {'Auto': 0, 'Man': 0, 'Audit': 0, 'Error': 0, 'Maintenance': 0, 'Ok': 0, 'Nok': 0, 'ErrorCodes': ''}
 
-# Global variables to create flags and saved number created pieces.
+# Global variables to set the cycle time, threads sleeps, create flags and saved number created pieces.
 # TODO: writing_sql = False
 num_ok = num_nok = 0
 fabricated_ok = fabricated_nok = False
 db_sleep = 10
 plc_sleep = 0.030
+cycle_time = 10
 
 # SQLite3 PATH and creation table strings.
 sql_path = "/media/rpiiot/CCCOMA_X64F/4246_IOT.db"
@@ -29,65 +30,9 @@ create_table_oee = "CREATE TABLE table_oee (Date TIME, Hour TIME, Oee REAL, Avai
 
 """
 ---------------------------------------
-OEE FUNCTIONS
----------------------------------------
-- Get the total time of the current shift.
-- Get: Start hour, end hour, total number of hours of the current shift.
-- Get: The number of hours until now in the current shift.
-- Get: The number of intervals has passed.
----------------------------------------
-"""
-def get_count_num_intervals(sql_connection, sql_cursor):
-    """
-    Function that returns the number of intervals has passed.
-    Consider the time between two intervals the time elapsed between the writing
-    of two records in the database.
-    We can get the toal time elapsed by multiplying the number of intervals that have
-    passed since the start of shift by the time that elapses between writing 2 records
-    to the database.
-    """
-    sql_query = "SELECT COUNT(*) FROM table_plc WHERE Hour > {} AND Hour < {} AND Date = '{}'".format(
-        get_start_shift_hour(sql_connection, sql_cursor),
-        get_start_end_hour(sql_connection, sql_cursor),
-        time.strftime("%D")
-    )
-
-
-def get_start_shift_hour(sql_connection, sql_cursor):
-    """
-    Function that returns the start hour of the current shift.
-    Current shift is determine dy the day of the week and the time we are in.
-    """
-    sql_query = "SELECT TODO FROM table_shifts WHERE days LIKE '%{}%' AND Start_time < '{}' AND End_time > '{}'".format(
-        time.strftime("%A"), current_hour, time.strftime("%H:%M:%S"), time.strftime("%H:%M:%S")
-    )
-    try:
-        sql_cursor.execute(sql_query)
-        sql_connection.commit()
-    except sqlite3.OperationalError as e:
-        print("Error to get the start time of the shift. Error: ", e)
-
-def get_start_shift_hour(sql_connection, sql_cursor):
-    """
-    Function that returns the start hour of the current shift.
-    Current shift is determine dy the day of the week and the time we are in.
-    """
-    sql_query = "SELECT TODO FROM table_shifts WHERE days LIKE '%{}%' AND Start_time < '{}' AND End_time > '{}'".format(
-        time.strftime("%A"), current_hour, time.strftime("%H:%M:%S"), time.strftime("%H:%M:%S")
-    )
-    try:
-        sql_cursor.execute(sql_query)
-        sql_connection.commit()
-    except sqlite3.OperationalError as e:
-        print("Error to get the start time of the shift. Error: ", e)
-
-
-"""
----------------------------------------
 COMPLEMENTARY FUNCTIONS
 ---------------------------------------
 """
-
 def convert_byte_to_bit(buffer):
     """
     Return all bits of the DB.
@@ -145,9 +90,6 @@ def create_tables(sql_cursor):
 THREADS FUNCTIONS
 ---------------------------------------
 """
-
-# TODO:
-#def write_sql(sql_connection, sql_cursor):
 def write_sql():
     """
     Write the values readed from PLC and saves it in the dictionary «db_values» in the database.
@@ -166,8 +108,14 @@ def write_sql():
         sql_cursor = sql_connection.cursor()
         create_tables(sql_cursor)
 
+    # Create OEE class instance.
+    current_oee = OEE(db_sleep, cycle_time, sql_connection, sql_cursor)
+    current_oee.get_start_shift_time()
+    current_oee.get_end_shift_time()
+
     while True:
-        # Save current PLC values and reset values for read DB again. WARNING: python memory when «=».!!!
+        # PLC VALUES WRITING DB.
+        # Save current PLC values and reset values for read DB again. WARNING: python position memory when «=».!!!
         db_values_temp = {'Auto': db_values['Auto'], 'Man': db_values['Man'], 'Audit': db_values['Audit'],
                           'Error': db_values['Error'], 'Maintenance': db_values['Maintenance'],
                           'Ok': db_values['Ok'], 'Nok': db_values['Nok'], 'ErrorCodes': db_values['ErrorCodes']}
@@ -176,18 +124,37 @@ def write_sql():
         db_values.update({'Auto' : 0, 'Man' : 0, 'Audit' : 0, 'Error' : 0, 'Maintenance': 0, 'Ok' : 0, 'Nok' : 0, 'ErrorCodes' : '' })
         num_ok = 0
         num_nok = 0
-        print(num_ok, " --------- ", num_ok_temp)
-        print(num_nok, " --------- ", num_nok_temp)
 
-        # Start writing data to the SQL.
+        # Start writing data to SQL.
         # TODO: Falta afegir els valors per a la columna Errors (DB 100).
-        sql_query = "INSERT INTO table_plc (Date,Hour,Auto,Manual,Audit,Error,Maintenance,Ok,Nok) VALUES ('{}','{}',{},{},{},{},{},{},{})".format(
+        sql_query_plc = "INSERT INTO table_plc (Date,Hour,Auto,Manual,Audit,Error,Maintenance,Ok,Nok) VALUES ('{}','{}',{},{},{},{},{},{},{})".format(
             datetime.today().strftime('%D'), datetime.today().strftime('%H:%M:%S'),
             db_values_temp['Auto'], db_values_temp['Man'], db_values_temp['Audit'], db_values_temp['Error'],
             db_values_temp['Maintenance'], num_ok_temp, num_nok_temp) # TODO: db_values_temp['Error'])
+        write_values_sql(sql_connection, sql_cursor, sql_query_plc)
+
+        # OEE VALUES WRITING DB.
+        # If the current time not in range of shift, the shift has changed. Reset OEE values and get new range for new shift.
+        if (datetime.today().strftime("%H:%M:%S") in range(current_oee.start_shift_time, current_oee.end_shift_time) == False):
+            current_oee.reset_values()
+            current_oee.get_start_shift_time()
+            current_oee.get_end_shift_time()
+            current_oee.get_break_shift_time()
+
+        current_oee.sum_iteration()
+
+        if (db_values_temp['Maintenance'] == 1):
+            current_oee.sum_maintenance()
+
+        if (db_values_temp['Error'] == 1):
+            current_oee.sum_error()
+
+        sql_query_oee = "INSERT INTO table_oee (Date, Hour, Oee, Availability, Performance, Quality) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
+            datetime.today().strftime("%D"), datetime.today().strftime("%H:%M:%S"),
+            current_oee.get_oee(), current_oee.get_availability(), current_oee.get_performance(), current_oee.get_quality())
+        write_values_sql(sql_connection, sql_cursor, sql_query_plc)
 
         # Insert values readed from the PLC to the database.
-        write_values_sql(sql_connection, sql_cursor, sql_query)
         time.sleep(db_sleep)
 
 def read_plc():
@@ -243,6 +210,4 @@ def main():
 
 if __name__ == "__main__":
     print("RASPY-COM\n-----------")
-    ao = OEE.OEE(10)
-    print(" ----------------  ", ao.num_iterations)
-    # main()
+    main()
