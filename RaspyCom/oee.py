@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env pythongT
 # -*- coding: utf-8 -*-
 
 import sys
@@ -7,11 +7,12 @@ import snap7
 import sqlite3
 import os
 import datetime
+from db import db
 from snap7 import util
 from threading import *
 from datetime import datetime, timedelta
 
-class OEE():
+class oee():
     """
     Class OEE.
     Calculate the OEE since shift has started.
@@ -91,96 +92,51 @@ class OEE():
         # Select break time from current shift.
         sql_query = "SELECT Break_time FROM table_shifts WHERE days LIKE '%{}%' AND Start_time = '{}'".format(
             time.strftime("%A"), self.start_shift_time)
-        try:
-            self.sql_cursor.execute(sql_query)
-            self.sql_connection.commit()
-            result = self.sql_cursor.fetchone()[0]
-            self.break_shift_time = result if result != None else 0
-        except sqlite3.OperationalError as e:
-            print("Error to get the end time of the shift. Error: ", e)
-            return -1
-
-        return 0
+        object_db = db()
+        self.break_shift_time =  object_db.write_to_db(self.sql_connection, self.sql_cursor, sql_query)
+        return self.break_shift_time
 
     def get_start_shift_time(self):
         """
         Get the start time of the current shift.
         The night shift has extended for 2 days (22:00 to 06:00), so it must be calculated differently.
+        If the current time is < 6AM or > 10PM, the current shift is night.
+        It externds for 2 days, so it's calcualted differently.
         """
-        # Get the current time.
         current_time = datetime.now().strftime("%H:%M:%S")
 
         # Select started hour from current shift.
         if (current_time >= '06:00:00' and current_time < '22:00:00'):
             sql_query = "SELECT Start_time FROM table_shifts WHERE days LIKE '%{}%' AND Start_time <= '{}' AND End_time > '{}'".format(
                 time.strftime("%A"), current_time, current_time)
-
-            try:
-                self.sql_cursor.execute(sql_query)
-                self.sql_connection.commit()
-                self.start_shift_time = self.sql_cursor.fetchone()[0]
-                # TODO result = self.sql_cursor.fetchone()[0]
-                # TODO self.start_shift_time = result if result != None else 0
-
-            except sqlite3.OperationalError as e:
-                print("Error to get the start time of the shift. Error: ", e)
-                return -1
-
-        # If the current time is < 6AM or > 10PM, the current shift is night.
-        # It externds for 2 days, so it0s calcualted differently.
         else:
             sql_query = "SELECT MAX(Start_time) FROM table_shifts WHERE days LIKE '%{}%'".format(time.strftime("%A"))
 
-            try:
-                self.sql_cursor.execute(sql_query)
-                self.sql_connection.commit()
-                self.start_shift_time = self.sql_cursor.fetchone()[0]
-                # TODO result = self.sql_cursor.fetchone()[0]
-                # TODO self.start_shift_time = result if result != None else 0
-
-            except sqlite3.OperationalError as e:
-                print("Error to get the start time of the shift. Error: ", e)
-                return -1
-
-        return 0
+        object_db = db()
+        result = object_db.write_to_db(self.sql_connection, self.sql_cursor, sql_query)
+        if (result != None and result != -1):
+            self.start_shift_time = result
+        return result
 
     def get_end_shift_time(self):
         """
         Get the end time of the current shift.
         The night shift has extended for 2 days (22:00 to 06:00), so it must be calculated differently.
+        If the current time is < 6AM or > 10PM, the current shift is night.
         """
-        # Get the current time.
         current_time = datetime.now().strftime("%H:%M:%S")
 
-        # Select ending hour from current shift.
         if (current_time >= '06:00:00' and current_time < '22:00:00'):
-            sql_query = "SELECT End_time FROM table_shifts WHERE days LIKE '%{}%' AND Start_time <= '{}' AND End_time > '{}'".format(
-                time.strftime("%A"), current_time, current_time)
-            try:
-                self.sql_cursor.execute(sql_query)
-                self.sql_connection.commit()
-                self.end_shift_time = self.sql_cursor.fetchone()[0]
-                # TODO result = self.sql_cursor.fetchone()[0]
-                # TODO self.start_shift_time = result if result != None else 0
-            except sqlite3.OperationalError as e:
-                print("Error to get the end time of the shift. Error: ", e)
-                return -1
-
-        # If the current time is < 6AM or > 10PM, the current shift is night.
-        # It externds for 2 days, so it's calcualted differently.
+            sql_query = "SELECT COUNT(*) FROM table_plc WHERE Date = '{}' AND Hour >= '{}' AND Hour < '{}' AND Error = 1".format(
+                time.strftime("%A"), self.start_shift_time, self.end_shift_time)
         else:
             sql_query = "SELECT MIN(End_time) FROM table_shifts WHERE days LIKE '%{}%'".format(time.strftime("%A"))
-            try:
-                self.sql_cursor.execute(sql_query)
-                self.sql_connection.commit()
-                self.end_shift_time = self.sql_cursor.fetchone()[0]
-                # TODO result = self.sql_cursor.fetchone()[0]
-                # TODO self.start_shift_time = result if result != None else 0
-            except sqlite3.OperationalError as e:
-                print("Error to get the end time of the shift. Error: ", e)
-                return -1
 
-        return 0
+        object_db = db()
+        result = object_db.write_to_db(self.sql_connection, self.sql_cursor, sql_query)
+        if (result != None and result != -1):
+            self.end_shift_time = result
+        return result
 
     """
     ---------------------------------------
@@ -204,7 +160,7 @@ class OEE():
         Get the «AVAILABILITY» parameter for the OEE calculation.
         """
         if ((self.work_time() - self.planned_stops_time()) == 0):
-                print("TPO (Total work time - tota break time planned) is 0. Number divided by 0 is infinity.")
+                print("TPO (Total work time - total break time planned) is 0. Number divided by 0 is infinity.")
                 return 0
 
         return round((100 * (self.work_time() - self.planned_stops_time() - self.error_time()) /
@@ -216,7 +172,7 @@ class OEE():
         Is calculated by the following formula:
         (num_iteration * break_time_interval) + (num_maintenance * interval_duration)
         """
-        return (self.num_iterations * self.break_time_interval()) + (self.num_maintenance * self.interval_duration)
+        return (self.num_iterations * self.break_time_interval()) + (self.get_num_maintenance() * self.interval_duration)
 
     def break_time_interval(self):
         """
@@ -230,6 +186,27 @@ class OEE():
             return 0
 
         return (self.break_shift_time * 60 * self.interval_duration / self.total_time_shift())
+
+    def get_num_maintenance(self):
+        """
+        Get the total maintenances are in the database since current shift has started."
+        """
+        current_time = datetime.now().strftime("%H:%M:%S")
+
+        if (current_time >= '06:00:00' and current_time < '22:00:00'):
+            sql_query = "SELECT COUNT(*) FROM table_plc WHERE Date = '{}' AND Hour >= '{}' AND Hour < '{}' AND Maintenance = 1", format(
+                time.strftime("%A"), current_time, current_time)
+        # If the current time is >= 22:00, the shift is night but the next day hasn't started yet.
+        elif (current_time >= "22:00:00"):
+            sql_query = "SELECT COUNT(*) FROM table_plc WHERE (Date = '{}' AND Hour >= '{}') AND Maintenance = 1".format(
+                datetime.today().strftime("%D"), self.start_shift_time)
+        else:
+            sql_query = "SELECT COUNT(*) FROM table_plc WHERE (Date = '{}' AND Hour >= '{}') AND (Date = '{}' AND Hour < '{}') AND Maintenance = 1".format(
+                (datetime.today() - timedelta(days = 1)).strftime("%D"), self.start_shift_time,
+                datetime.today().strftime("%D"), self.end_shift_time)
+
+        object_db = db()
+        return object_db.write_to_db(self.sql_connection, self.sql_cursor, sql_query)
 
     def total_time_shift(self):
         """
@@ -248,7 +225,28 @@ class OEE():
         Get the toal erros time in the current shift.
         num_error * interval.
         """
-        return (self.num_error * self.interval_duration)
+        return (self.get_num_error() * self.interval_duration)
+
+    def get_num_error(self):
+        """
+        Get the total errors are in the database since current shift has started."
+        """
+        current_time = datetime.now().strftime("%H:%M:%S")
+
+        if (current_time >= '06:00:00' and current_time < '22:00:00'):
+            sql_query = "SELECT COUNT(*) FROM table_plc WHERE Date = '{}' AND Hour >= '{}' AND Hour < '{}' AND Error = 1", format(
+                time.strftime("%A"), current_time, current_time)
+        # If the current time is >= 22:00, the shift is night but the next day hasn't started yet.
+        elif (current_time >= "22:00:00"):
+            sql_query = "SELECT COUNT(*) FROM table_plc WHERE (Date = '{}' AND Hour >= '{}') AND Error = 1".format(
+                datetime.today().strftime("%D"), self.start_shift_time)
+        else:
+            sql_query = "SELECT COUNT(*) FROM table_plc WHERE (Date = '{}' AND Hour >= '{}') AND (Date = '{}' AND Hour < '{}') AND Error = 1".format(
+                (datetime.today() - timedelta(days = 1)).strftime("%D"), self.start_shift_time,
+                datetime.today().strftime("%D"), self.end_shift_time)
+
+        object_db = db()
+        return object_db.write_to_db(self.sql_connection, self.sql_cursor, sql_query)
 
     """
     ---------------------------------------
@@ -264,8 +262,7 @@ class OEE():
         if ((self.cycle_time * self.work_time()) == 0):
             print("Indefined work get performance. Number divided by 0 is infinty.")
             return 0
-
-        return round((100 * self.total_pieces_fabricated() / (self.cycle_time * self.work_time())), 2)
+        return round((100 * self.total_pieces_fabricated() / (self.work_time() / self.cycle_time)), 2)
 
     """
     ---------------------------------------
@@ -287,40 +284,27 @@ class OEE():
     def total_pieces_ok_fabricated(self):
         """
         Select from «table_plc» of the database the total pieces fabricated correctly (OK).
+        If the current time is < 6AM or > 10PM, the current shift is night.
+        It extends for 2 days, so it's calculated differently.
         The night shift has extended for 2 days (22:00 to 06:00), so it must be calculated differently.
         """
-        # Get the current time.
         current_time = datetime.now().strftime("%H:%M:%S")
 
         # Select all pieces fabricated for current shift.
         if (current_time >= '06:00:00' and current_time < '22:00:00'):
-            sql_query = "SELECT SUM(OK) FROM table_plc WHERE Date = '{}' AND Hour >= '{}' AND Hour < '{}' AND Rework = 'False'".format(
+            sql_query = "SELECT SUM(OK) FROM table_plc WHERE Date = '{}' AND Hour >= '{}' AND Hour < '{}'".format(
                 datetime.today().strftime("%D"), self.start_shift_time, self.end_shift_time)
-
-            try:
-                self.sql_cursor.execute(sql_query)
-                self.sql_connection.commit()
-                result = self.sql_cursor.fetchone()[0]
-            except sqlite3.OperationalError as e:
-                print("Error to count all pieces from the DB: ", e)
-                return -1
-
-        # If the current time is < 6AM or > 10PM, the current shift is night.
-        # It extends for 2 days, so it's calculated differently.
+        # If the current time is >= 22:00, the shift is night but the next day hasn't started yet.
+        elif (current_time >= "22:00:00"):
+            sql_query = "SELECT SUM(OK) FROM table_plc WHERE (Date = '{}' AND Hour >= '{}')".format(
+                datetime.today().strftime("%D"), self.start_shift_time)
         else:
             sql_query = "SELECT SUM(OK) FROM table_plc WHERE (Date = '{}' AND Hour >= '{}') OR (Date = '{}' AND Hour < '{}')".format(
                 (datetime.today() - timedelta(days = 1)).strftime("%D"), self.start_shift_time,
                 datetime.today().strftime("%D"), self.end_shift_time)
 
-            try:
-                self.sql_cursor.execute(sql_query)
-                self.sql_connection.commit()
-                result = self.sql_cursor.fetchone()[0]
-            except sqlite3.OperationalError as e:
-                print("Error to count all pieces from the DB: ", e)
-                return -1
-
-        return result if result != None else 0
+        object_db = db()
+        return object_db.write_to_db(self.sql_connection, self.sql_cursor, sql_query)
 
     """
     ---------------------------------------
@@ -331,45 +315,46 @@ class OEE():
         """
         Get the total work time since current shift has started.
         """
-        return (self.num_iterations * self.interval_duration)
+        current_time = datetime.now().strftime("%H:%M:%S")
+
+        # Select total registers writted to database since current shift has started.
+        if (current_time >= "06:00:00" and current_time < "22:00:00"):
+            sql_query = "SELECT COUNT(*) FROM table_plc WHERE Date = '{}' AND Hour >= '{}' AND Hour < '{}'".format(
+                datetime.today().strftime("%D"), self.start_shift_time, self.end_shift_time)
+        # If the current time is >= 22:00, the shift is night but the next day hasn't started yet.
+        elif (current_time >= "22:00:00"):
+            sql_query = "SELECT COUNT(*) FROM table_plc WHERE (Date = '{}' AND Hour >= '{}')".format(
+                datetime.today().strftime("%D"), self.start_shift_time)
+        else:
+            sql_query = "SELECT COUNT(*) FROM table_plc WHERE (Date = '{}' AND Hour >= '{}') OR (Date = '{}' AND Hour < '{}')".format(
+                (datetime.today() - timedelta(days = 1)).strftime("%D"), self.start_shift_time,
+                datetime.today().strftime("%D"), self.end_shift_time)
+
+        object_db = db()
+        return (object_db.write_to_db(self.sql_connection, self.sql_cursor, sql_query) * self.interval_duration)
 
     def total_pieces_fabricated(self):
         """
         Select from «table_plc» of the database the total pieces fabricted (OK + NOK).
         The night shift has extended for 2 days (22:00 to 06:00), so it must be calculated differently.
         """
-        # Get the current time.
         current_time = datetime.now().strftime("%H:%M:%S")
 
         # Select all pieces fabricated for current shift.
         if (current_time >= '06:00:00' and current_time < '22:00:00'):
             sql_query = "SELECT SUM(OK + NOK) FROM table_plc WHERE Date = '{}' AND Hour >= '{}' AND Hour < '{}'".format(
                 datetime.today().strftime("%D"), self.start_shift_time, self.end_shift_time)
-
-            try:
-                self.sql_cursor.execute(sql_query)
-                self.sql_connection.commit()
-                result = self.sql_cursor.fetchone()[0]
-            except sqlite3.OperationalError as e:
-                print("Error to count all pieces from the DB: ", e)
-                return -1
-
-        # If the current time is < 6AM or > 10PM, the current shift is night.
-        # It extends for 2 days, so it's calculated differently.
+        # If the current time is >= 22:00, the shift is night but the next day hasn't started yet.
+        elif (current_time >= "22:00:00"):
+            sql_query = "SELECT SUM(OK + NOK) FROM table_plc WHERE (Date = '{}' AND Hour >= '{}')".format(
+                datetime.today().strftime("%D"), self.start_shift_time)
         else:
             sql_query = "SELECT SUM(OK + NOK) FROM table_plc WHERE (Date = '{}' AND Hour >= '{}') OR (Date = '{}' AND Hour < '{}')".format(
                 (datetime.today() - timedelta(days = 1)).strftime("%D"), self.start_shift_time,
                 datetime.today().strftime("%D"), self.end_shift_time)
 
-            try:
-                self.sql_cursor.execute(sql_query)
-                self.sql_connection.commit()
-                result = self.sql_cursor.fetchone()[0]
-            except sqlite3.OperationalError as e:
-                print("Error to count all pieces from the DB: ", e)
-                return -1
-
-        return result if result != None else 0
+        object_db = db()
+        return object_db.write_to_db(self.sql_connection, self.sql_cursor, sql_query)
 
 if __name__ == '__main__':
     # Start connection.
@@ -378,9 +363,10 @@ if __name__ == '__main__':
     sql_cursor = sql_connection.cursor()
 
     # Class OEE.
-    current_oee = OEE(10, 10, sql_connection, sql_cursor)
+    current_oee = oee(10, 10, sql_connection, sql_cursor)
     # sql_connection.close()
 
+    """
     print("---------------------------------")
     print("OEE VALUES\n---------------------------------")
     print("\tInterval duration: ", current_oee.interval_duration)
@@ -391,6 +377,7 @@ if __name__ == '__main__':
     print("\tStart shift hour: ", current_oee.start_shift_time)
     print("\tEnd shift hour: ", current_oee.end_shift_time)
     print("\tBreak shift hour: ", current_oee.break_shift_time)
+    """
 
     # Insert virtual values.
     for k in range(100):
@@ -418,6 +405,7 @@ if __name__ == '__main__':
     print("\tEnd shift hour: ", current_oee.end_shift_time)
     print("\tBreak shift hour: ", current_oee.break_shift_time)
 
+    """
     current_oee.reset_values()
 
     print("---------------------------------")
@@ -456,6 +444,7 @@ if __name__ == '__main__':
     print("\tStart shift hour: ", current_oee.start_shift_time)
     print("\tEnd shift hour: ", current_oee.end_shift_time)
     print("\tBreak shift hour: ", current_oee.break_shift_time)
+    """
 
     print("...........................")
     print("AVAILABILITY\n...........................")
