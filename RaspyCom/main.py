@@ -6,7 +6,8 @@ import time
 import snap7
 import sqlite3
 import os
-from oee import oee 
+from oee import oee
+from db import db
 from datetime import datetime
 from snap7 import util
 from threading import *
@@ -28,7 +29,9 @@ Plc_sleep = 0.030
 Cycle_time = 10
 
 # SQLite3 PATH and creation table strings.
-sql_path = "/media/rpiiot/CCCOMA_X64F/4246_IOT.db"
+# TODO: Això se'n va a la clase db.
+# sql_path = "/media/rpiiot/CCCOMA_X64F/4246_IOT.db"
+sql_path = "/media/rpiiot/01A8-D2D2/4246_IOT.db"
 create_table_plc = "CREATE TABLE table_plc (Date TIME, Hour TIME, Auto INTEGER, Manual INTEGER, Audit INTEGER, Error INTEGER, Maintenance INTGER, Ok INTEGER, NOk INTEGER, Error_codes TEXT, PRIMARY KEY (Date, Hour))"
 create_table_shifts = "CREATE TABLE table_shifts (Id INTEGER, Days STRING, Start_time TIME, End_time TIME, Break_time INTEGER, PRIMARY KEY (id))"
 create_table_oee = "CREATE TABLE table_oee (Date TIME, Hour TIME, Oee REAL, Availability REAL, Performance REAL, Quality REAL, PRIMARY KEY (Date, Hour))"
@@ -101,6 +104,7 @@ def write_plc_values(sql_connection, sql_cursor):
                       'Ok': db_values['Ok'], 'Nok': db_values['Nok'], 'ErrorCodes': db_values['ErrorCodes']}
     num_ok_temp = num_ok
     num_nok_temp = num_nok
+    print("Pieces OK: {}\t Pieces NOK: {}", num_ok, num_nok)
 
     db_values.update({'Auto' : 0, 'Man' : 0, 'Audit' : 0, 'Error' : 0, 'Maintenance': 0, 'Ok' : 0, 'Nok' : 0, 'ErrorCodes' : '' })
     num_ok = 0
@@ -121,27 +125,13 @@ def write_oee_values(sql_connection, sql_cursor, object_oee, f_maintenance, f_er
     If the current time not in range of shift, the shift has changed. Reset OEE values and get new range for new shift.
     """
     current_hour = datetime.today().strftime("%H:%M:%S")
-    if ((object_oee.start_shift_time or object_oee.end_shift_time) != None and
-            (current_hour >= object_oee.start_shift_time) and (current_hour < object_oee.end_shift_time)):
+    if ((object_oee.start_shift_time and object_oee.end_shift_time) == None and
+            (current_hour < object_oee.start_shift_time) or (current_hour >= object_oee.end_shift_time)):
         object_oee.reset_values()
         object_oee.get_start_shift_time()
         object_oee.get_end_shift_time()
         object_oee.get_break_shift_time()
 
-    object_oee.sum_iteration()
-
-    # if (db_values_temp['Maintenance'] == 1):
-    if (f_maintenance == 1):
-        object_oee.sum_maintenance()
-
-    # if (db_values_temp['Error'] == 1):
-    if (f_error == 1):
-        object_oee.sum_error()
-
-    print("OEE - Availa: {} - Performance: {} - Quality: {}",
-          object_oee.get_availability(),
-          object_oee.get_performance(),
-          object_oee.get_quality())
     sql_query_oee = "INSERT INTO table_oee (Date, Hour, Oee, Availability, Performance, Quality) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
         datetime.today().strftime("%D"), datetime.today().strftime("%H:%M:%S"),
         object_oee.get_oee(), object_oee.get_availability(), object_oee.get_performance(), object_oee.get_quality())
@@ -161,7 +151,7 @@ def write_sql():
 
     # Start DB connection. If the database not exists, create tables.
     if (os.path.exists(sql_path)):
-        print("Connected to the database.")
+        print("Dabase conected.")
         sql_connection = sqlite3.connect(sql_path)
         sql_cursor = sql_connection.cursor()
     else:
