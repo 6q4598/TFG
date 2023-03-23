@@ -15,13 +15,17 @@ from threading import *
 db_values = {'Auto': 0, 'Man': 0, 'Audit': 0, 'Error': 0, 'Maintenance': 0, 'Ok': 0, 'Nok': 0, 'ErrorCodes': ''}
 
 # Global variables to set the cycle time, threads sleeps, create flags and saved number created pieces.
-# iiiTODO: writing_sql = False
+# TODO: treure les variables globals i encapsular-les en una clase.
+# -------------------------------------
 plc_connected = False
 num_ok = num_nok = 0
 fabricated_ok = fabricated_nok = False
-db_sleep = 60
-plc_sleep = 0.030
-cycle_time = 10
+# -------------------------------------
+
+# Constants.
+Db_sleep = 60
+Plc_sleep = 0.030
+Cycle_time = 10
 
 # SQLite3 PATH and creation table strings.
 sql_path = "/media/rpiiot/CCCOMA_X64F/4246_IOT.db"
