@@ -6,7 +6,7 @@ import time
 import snap7
 import sqlite3
 import os
-from OEE import OEE
+from oee import oee 
 from datetime import datetime
 from snap7 import util
 from threading import *
@@ -120,7 +120,8 @@ def write_oee_values(sql_connection, sql_cursor, object_oee, f_maintenance, f_er
     """
     # TODO: if (datetime.today().strftime("%H:%M:%S") in range(object_oee.start_shift_time, object_oee.end_shift_time) == False):
     current_hour = datetime.today().strftime("%H:%M:%S")
-    if ((current_hour >= object_oee.start_shift_time) and (current_hour < object_oee.end_shift_time)):
+    if ((object_oee.start_shift_time or object_oee.end_shift_time) != None and
+            (current_hour >= object_oee.start_shift_time) and (current_hour < object_oee.end_shift_time)):
         object_oee.reset_values()
         object_oee.get_start_shift_time()
         object_oee.get_end_shift_time()
@@ -165,14 +166,19 @@ def write_sql():
         create_tables(sql_cursor)
 
     # Create OEE class instance.
+<<<<<<< HEAD
     current_oee = OEE(Db_sleep, Cycle_time, sql_connection, sql_cursor)
+=======
+    current_oee = oee(db_sleep, cycle_time, sql_connection, sql_cursor)
+>>>>>>> 65a42ce413a1e71b03e48a46481b476802612d34
     current_oee.get_start_shift_time()
     current_oee.get_end_shift_time()
+    current_oee.get_break_shift_time()
 
     while True:
+        # Insert PLC and OEE values in the database.
         f_maintenance = db_values['Maintenance']
         f_error = db_values['Error']
-        # Insert PLC and OEE values in the database.
         write_plc_values(sql_connection, sql_cursor)
         write_oee_values(sql_connection, sql_cursor, current_oee, f_maintenance, f_error)
         time.sleep(Db_sleep)
@@ -192,7 +198,7 @@ def read_plc():
 
             # If client is connected to the PLC, read DB and converts it to a bit array.
             if (client.get_connected()):
-                print("PLC connected.")
+                # print("PLC connected.")
                 read_plc = client.db_read(91, 0, 2)
                 read_plc_bin = convert_byte_to_bit(read_plc)
                 # Then, count pieces and write it to the dictionary «db_values».
