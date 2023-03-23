@@ -101,7 +101,6 @@ def write_plc_values(sql_connection, sql_cursor):
                       'Ok': db_values['Ok'], 'Nok': db_values['Nok'], 'ErrorCodes': db_values['ErrorCodes']}
     num_ok_temp = num_ok
     num_nok_temp = num_nok
-    print("Num peces OK: {}\nNum peces NOK: {}".format(num_ok, num_nok))
 
     db_values.update({'Auto' : 0, 'Man' : 0, 'Audit' : 0, 'Error' : 0, 'Maintenance': 0, 'Ok' : 0, 'Nok' : 0, 'ErrorCodes' : '' })
     num_ok = 0
@@ -139,6 +138,10 @@ def write_oee_values(sql_connection, sql_cursor, object_oee, f_maintenance, f_er
     if (f_error == 1):
         object_oee.sum_error()
 
+    print("OEE - Availa: {} - Performance: {} - Quality: {}",
+          object_oee.get_availability(),
+          object_oee.get_performance(),
+          object_oee.get_quality())
     sql_query_oee = "INSERT INTO table_oee (Date, Hour, Oee, Availability, Performance, Quality) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
         datetime.today().strftime("%D"), datetime.today().strftime("%H:%M:%S"),
         object_oee.get_oee(), object_oee.get_availability(), object_oee.get_performance(), object_oee.get_quality())
@@ -169,7 +172,7 @@ def write_sql():
         print("Database created.")
 
     # Create OEE class instance.
-    current_oee = oee(db_sleep, cycle_time, sql_connection, sql_cursor)
+    current_oee = oee(Db_sleep, Cycle_time, sql_connection, sql_cursor)
     current_oee.get_start_shift_time()
     current_oee.get_end_shift_time()
     current_oee.get_break_shift_time()
@@ -181,7 +184,7 @@ def write_sql():
             f_error = db_values['Error']
             write_plc_values(sql_connection, sql_cursor)
             write_oee_values(sql_connection, sql_cursor, current_oee, f_maintenance, f_error)
-        time.sleep(db_sleep)
+        time.sleep(Db_sleep)
 
 def read_plc():
     """
@@ -216,7 +219,7 @@ def read_plc():
             continue
 
         # Set a runtime delay.
-        time.sleep(plc_sleep)
+        time.sleep(Plc_sleep)
 
 """
 ---------------------------------------
