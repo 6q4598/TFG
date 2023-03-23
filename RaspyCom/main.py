@@ -15,10 +15,11 @@ from threading import *
 db_values = {'Auto': 0, 'Man': 0, 'Audit': 0, 'Error': 0, 'Maintenance': 0, 'Ok': 0, 'Nok': 0, 'ErrorCodes': ''}
 
 # Global variables to set the cycle time, threads sleeps, create flags and saved number created pieces.
-# TODO: writing_sql = False
+# iiiTODO: writing_sql = False
+plc_connected = False
 num_ok = num_nok = 0
 fabricated_ok = fabricated_nok = False
-db_sleep = 10
+db_sleep = 60
 plc_sleep = 0.030
 cycle_time = 10
 
@@ -116,7 +117,6 @@ def write_oee_values(sql_connection, sql_cursor, object_oee, f_maintenance, f_er
     Write the OEE calculated values to the «table_oee» database table.
     If the current time not in range of shift, the shift has changed. Reset OEE values and get new range for new shift.
     """
-    # TODO: if (datetime.today().strftime("%H:%M:%S") in range(object_oee.start_shift_time, object_oee.end_shift_time) == False):
     current_hour = datetime.today().strftime("%H:%M:%S")
     if ((object_oee.start_shift_time or object_oee.end_shift_time) != None and
             (current_hour >= object_oee.start_shift_time) and (current_hour < object_oee.end_shift_time)):
@@ -150,7 +150,7 @@ def write_sql():
     Write the values readed from PLC and saves it in the dictionary «db_values» in the database.
     Write in the database the values readed from PLC and saved in the dictionary «db_values». Then, reset «db_values» values.
     """
-    global num_ok, num_nok
+    global num_ok, num_nok, plc_connected
 
     # Start DB connection. If the database not exists, create tables.
     if (os.path.exists(sql_path)):
@@ -162,6 +162,7 @@ def write_sql():
         sql_connection = sqlite3.connect(sql_path)
         sql_cursor = sql_connection.cursor()
         create_tables(sql_cursor)
+        print("Database created.")
 
     # Create OEE class instance.
     current_oee = oee(db_sleep, cycle_time, sql_connection, sql_cursor)
@@ -170,18 +171,19 @@ def write_sql():
     current_oee.get_break_shift_time()
 
     while True:
-        # Insert PLC and OEE values in the database.
-        f_maintenance = db_values['Maintenance']
-        f_error = db_values['Error']
-        write_plc_values(sql_connection, sql_cursor)
-        write_oee_values(sql_connection, sql_cursor, current_oee, f_maintenance, f_error)
+        if (plc_connected):
+            # Insert PLC and OEE values in the database.
+            f_maintenance = db_values['Maintenance']
+            f_error = db_values['Error']
+            write_plc_values(sql_connection, sql_cursor)
+            write_oee_values(sql_connection, sql_cursor, current_oee, f_maintenance, f_error)
         time.sleep(db_sleep)
 
 def read_plc():
     """
     Read DB 91 and 100 from the PLC.
     """
-    global num_ok, num_nok, fabricated_ok, fabricated_nok
+    global plc_connected, num_ok, num_nok, fabricated_ok, fabricated_nok
 
     while True:
 
@@ -192,7 +194,9 @@ def read_plc():
 
             # If client is connected to the PLC, read DB and converts it to a bit array.
             if (client.get_connected()):
-                # print("PLC connected.")
+                if plc_connected == False:
+                    print("PLC connected.")
+                plc_connected = True
                 read_plc = client.db_read(91, 0, 2)
                 read_plc_bin = convert_byte_to_bit(read_plc)
                 # Then, count pieces and write it to the dictionary «db_values».
@@ -225,7 +229,7 @@ def main():
     """
     # Create and start threats.
     read_plc_thread = Thread(target = read_plc)
-    write_sql_thread = Timer(10, function = write_sql) # TODO: , args = (sql_connection, sql_cursor))
+    write_sql_thread = Timer(10, function = write_sql)
     read_plc_thread.start()
     write_sql_thread.start()
 

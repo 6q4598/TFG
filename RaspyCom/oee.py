@@ -127,8 +127,8 @@ class oee():
         current_time = datetime.now().strftime("%H:%M:%S")
 
         if (current_time >= '06:00:00' and current_time < '22:00:00'):
-            sql_query = "SELECT COUNT(*) FROM table_plc WHERE Date = '{}' AND Hour >= '{}' AND Hour < '{}' AND Error = 1".format(
-                time.strftime("%A"), self.start_shift_time, self.end_shift_time)
+            sql_query = "SELECT End_time FROM table_shifts WHERE Days LIKE '%{}%' AND Start_time <= '{}' AND End_time > '{}'".format(
+                time.strftime("%A"), current_time, current_time)
         else:
             sql_query = "SELECT MIN(End_time) FROM table_shifts WHERE days LIKE '%{}%'".format(time.strftime("%A"))
 
@@ -194,8 +194,8 @@ class oee():
         current_time = datetime.now().strftime("%H:%M:%S")
 
         if (current_time >= '06:00:00' and current_time < '22:00:00'):
-            sql_query = "SELECT COUNT(*) FROM table_plc WHERE Date = '{}' AND Hour >= '{}' AND Hour < '{}' AND Maintenance = 1", format(
-                time.strftime("%A"), current_time, current_time)
+            sql_query = "SELECT COUNT(*) FROM table_plc WHERE Date = '{}' AND Hour >= '{}' AND Hour < '{}' AND Maintenance = 1".format(
+                time.strftime("%A"), self.start_shift_time, self.end_shift_time)
         # If the current time is >= 22:00, the shift is night but the next day hasn't started yet.
         elif (current_time >= "22:00:00"):
             sql_query = "SELECT COUNT(*) FROM table_plc WHERE (Date = '{}' AND Hour >= '{}') AND Maintenance = 1".format(
@@ -234,8 +234,8 @@ class oee():
         current_time = datetime.now().strftime("%H:%M:%S")
 
         if (current_time >= '06:00:00' and current_time < '22:00:00'):
-            sql_query = "SELECT COUNT(*) FROM table_plc WHERE Date = '{}' AND Hour >= '{}' AND Hour < '{}' AND Error = 1", format(
-                time.strftime("%A"), current_time, current_time)
+            sql_query = "SELECT COUNT(*) FROM table_plc WHERE Date = '{}' AND Hour >= '{}' AND Hour < '{}' AND Error = 1".format(
+                time.strftime("%A"), self.start_shift_time, self.end_shift_time)
         # If the current time is >= 22:00, the shift is night but the next day hasn't started yet.
         elif (current_time >= "22:00:00"):
             sql_query = "SELECT COUNT(*) FROM table_plc WHERE (Date = '{}' AND Hour >= '{}') AND Error = 1".format(
@@ -316,22 +316,7 @@ class oee():
         Get the total work time since current shift has started.
         """
         current_time = datetime.now().strftime("%H:%M:%S")
-
-        # Select total registers writted to database since current shift has started.
-        if (current_time >= "06:00:00" and current_time < "22:00:00"):
-            sql_query = "SELECT COUNT(*) FROM table_plc WHERE Date = '{}' AND Hour >= '{}' AND Hour < '{}'".format(
-                datetime.today().strftime("%D"), self.start_shift_time, self.end_shift_time)
-        # If the current time is >= 22:00, the shift is night but the next day hasn't started yet.
-        elif (current_time >= "22:00:00"):
-            sql_query = "SELECT COUNT(*) FROM table_plc WHERE (Date = '{}' AND Hour >= '{}')".format(
-                datetime.today().strftime("%D"), self.start_shift_time)
-        else:
-            sql_query = "SELECT COUNT(*) FROM table_plc WHERE (Date = '{}' AND Hour >= '{}') OR (Date = '{}' AND Hour < '{}')".format(
-                (datetime.today() - timedelta(days = 1)).strftime("%D"), self.start_shift_time,
-                datetime.today().strftime("%D"), self.end_shift_time)
-
-        object_db = db()
-        return (object_db.write_to_db(self.sql_connection, self.sql_cursor, sql_query) * self.interval_duration)
+        return ((datetime.strptime(current_time, '%H:%M:%S') - datetime.strptime(self.start_shift_time, "%H:%M:%S")).seconds)
 
     def total_pieces_fabricated(self):
         """
