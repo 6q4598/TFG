@@ -15,12 +15,14 @@ from threading import *
 db_values = {'Auto': 0, 'Man': 0, 'Audit': 0, 'Error': 0, 'Maintenance': 0, 'Ok': 0, 'Nok': 0, 'ErrorCodes': ''}
 
 # Global variables to set the cycle time, threads sleeps, create flags and saved number created pieces.
-# TODO: writing_sql = False
+# Variables globals, encapsular-les en una clase!!!! TODO TODO TODO
 num_ok = num_nok = 0
 fabricated_ok = fabricated_nok = False
-db_sleep = 10
-plc_sleep = 0.030
-cycle_time = 10
+
+# Constants
+Db_sleep = 10
+Plc_sleep = 0.030
+Cycle_time = 10
 
 # SQLite3 PATH and creation table strings.
 sql_path = "/media/rpiiot/CCCOMA_X64F/4246_IOT.db"
@@ -163,7 +165,7 @@ def write_sql():
         create_tables(sql_cursor)
 
     # Create OEE class instance.
-    current_oee = OEE(db_sleep, cycle_time, sql_connection, sql_cursor)
+    current_oee = OEE(Db_sleep, Cycle_time, sql_connection, sql_cursor)
     current_oee.get_start_shift_time()
     current_oee.get_end_shift_time()
 
@@ -173,7 +175,7 @@ def write_sql():
         # Insert PLC and OEE values in the database.
         write_plc_values(sql_connection, sql_cursor)
         write_oee_values(sql_connection, sql_cursor, current_oee, f_maintenance, f_error)
-        time.sleep(db_sleep)
+        time.sleep(Db_sleep)
 
 def read_plc():
     """
@@ -206,7 +208,7 @@ def read_plc():
             continue
 
         # Set a runtime delay.
-        time.sleep(plc_sleep)
+        time.sleep(Plc_sleep)
 
 """
 ---------------------------------------
