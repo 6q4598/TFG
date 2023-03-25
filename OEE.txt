@@ -1,0 +1,71 @@
+========================================================
+OEE
+========================================================
+La finalitat d'aquest projecte és proporcionar un sistema de visualització atractiu i en temps real del rendiment d'una fabrica. Per això és necessari calcular l'\acro{oee}. Aquest és un index percentual que mesura la productivitat de les fàbriques mitjançant tres paràmetres: disponibilitat, rendiment i qualitat. Descrit per primer cop per Seiichi Nakajima el 1982 en un article en japonès anomenat \emph{TPM tenkai} i publicat per l'Institut Japonès de Manteniment de Plantes (JIPM)\cite{IntangibleCapital:tpm01} i posteriorment editat en inglès \cite{Nakajima:tpm01}, és l'indicador més acceptat per mesurar l'eficiència i productivitat d'una planta.
+
+Disponibilitat
+--------------
+Es calcula dividint el temps que la màquina ha estat produint entre el temps total. El temps total és la suma del temps produint més el temps d'averies. El temps de les parades planificades\footnote{Es considera parades planificades el temps perdut que és calculable amb anterioritat. Per posar exemples, l'hora d'esmorzar o el canvi de torn són parades planificades. També els manteniments.} no és contemplat.
+
+- \[\textrm{Disponibilitat} = \frac{t_{t}}{t_{T}} \cdot 100\]
+- \[t_{T} = \textrm{temps treballat} - \textrm{temps planificat}\]
+- \[t_{t} = T_{T} - \textrm{temps averies}\]
+
+Aquest paràmetre és el més difícil de calcular, degut principalment a que hi ha múltiples factors que poden afectar el temps que la fàbrica esta treballant. Des d'un dispositiu com el que s'està dissenyant no és possible veure el que hi passa, ni tampoc si hi ha agut algún problema inesperat que ha obligat a parar els equips. Per aquest motiu, en el DB del PLC s'ha afegit un bit \emph{Manteniment} que permet precisar el càlcul del temps de para planificada. També s'ha afegit un bit \emph{Error} que permet el mateix per a les parades provocades per averies.
+
+En el càlcul es contempla que la escriptura a la base de dades es fa a intervals constants i planificats, cada $t$ segons. Es considera que les variacions que hi poden haver en aquest temps són menyspreables per al càlcul final, ja que el temps de cicle és aproximadament de 10 segons per peça.
+
+Tenint en compte tot l'anterior, i que l'OEE es calcula per torns, el càlcul de l'OEE ha de quedar de la següent forma:
+
+Temps total de treball
+......................
+El temps que s'ha estat treballant des de que el torn ha començat. És el resultat de restar l'hora actual $h$ per l'hora inicial del torn $h_{0}$.
+
+\[t_{w} = h - h_{0}\]
+
+Temps de parades planificades
+.............................
+És el temps que previsiblement s'està sense produir. A la taula de torns de la base de dades s'ha afegit una columna \emph{Break\_time} que guarda el temps de descans total del torn. En el DB del PLC també s'ha configurat un bit \emph{Manteniment} per tal de considerar en el càlcul aquest factor. D'aquesta forma, el càlcul del temps perdut per les parades que han estat planificades queda de la següent manera: 
+
+Primer es calcula el temps perdut degut als descansos $t_{r}$. Per fer-ho es multiplica el \emph{Break\_time} $b$ de la base de dades per $t_{w}$ i es divideix pel temps total de durada del torn $t_{s}$. % pel temps que ha passat des de que ha començat el torn, i es divideix pel temps total de durada del torn.
+
+\[t_{r} = b \cdot \frac{t_{w}}{t_{s}}\]
+
+Després es calcula el temps perdut degut als manteniments. Per això s'ha configurat un bit \emph{Manteniment}. Es suposa que l'operari de la fàbrica, abans de fer qualsevol acció, ha d'activar la corresponent opció des del PLC. Això posa el bit a <<$1$>>. El programa de comunicació amb el PLC llegeix aquest valor i ho tracta amb conseqüència. D'aquesta forma el temps perdut degut als manteniments $t_{m}$ és el producte de totes les vegades que s'ha escrit aquest bit a la base de dades $m$ pel temps que passa entre escriptura i escriptura $t$, el qual és constant.
+
+\[t_{m} = m \cdot t\]
+
+Finalment només queda sumar aquests dos resultats.
+
+\[t_{b} = t_{r} + t_{m}\]
+
+Temps d'error
+.............
+Si la producció ha sofert alguna averia, mesura el temps que ha afectat a la producció. Per calcular-ho es configurar un bit \emph{Error} que s'activa quan el PLC genera algún error. El programa de comunicació amb el PLC ho llegeix i ho guarda a la base de dades (com en el bit \emph{Manteniment}). Aquest temps es calcula multiplicant el registres que tenen \emph{Error} $e$ actiu per $t$.
+
+\[t_{e} = e \cdot t\]
+
+És important notar que en tots els càlculs hi ha una lleugera imprecisió, provocada principalment per la forma com tenen de funcionar els llenguatges de programació. No obstant, en tots els càlculs es considera que aquest error és menyspreable i que no afecta el resultat final. Finalment, el càlcul de la disponibilitat queda així:
+
+\[\textrm{Disponibilitat} = \frac{t_{w} - t_{b} - t_{e}}{t_{w} - t_{b}}\]
+
+I com que es vol en percentatge es multiplica per $100$.
+
+\[\textrm{Disponibilitat} = \frac{t_{w} - t_{b} - t_{e}}{t_{w} - t_{b}} \cdot 100\]
+
+---------
+Rendiment
+---------
+És el resultat de dividir les peces fabricades $p_{t}$ per la quantitat teòrica que s'hauria d'haver fabricat. El màxim teòric de producció de la fabrica resulta de dividir el temps treballat $t_{w}$ pel temps de cicle $t_c$ de la línia de producció. Aquest últim és un factor ideal que ve donat pel client.
+
+\[\textrm{Rendiment} = \frac{p_{t}}{\frac{t_{w}}{t_{c}}} = \frac{p_{t} \cdot t_{c}}{t_{w}}\]
+
+--------
+Qualitat
+--------
+Es divideix el número de peces OK $p_{o}$ entre el número total de peces fabricades $p_{t}$ --- OK i NOK. Es considera que una peça és OK quan compleix tots els estàndard de qualitat. Si es detecta algun problema en la qualitat del producte, la peça es considera NOK.
+
+Hi ha vegades que les peces que han estat considerades com a NOK es tornen a passar per la línia i poden o no ser considerades OK. No obstant, aquest fet en els càlculs de l'OEE no es té en compte. En el sistema que s'ha dissenyat es considera que les peces NOK no poden ser reprocessades, pel que aquest fet manca d'importància.
+
+\[\textrm{Qualitat} = \frac{p_{o}}{p_{t}}\]
+
