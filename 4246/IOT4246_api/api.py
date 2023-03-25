@@ -1,14 +1,12 @@
-from flask import Flask, render_template, request, make_response, session, flash, g, url_for, redirect
-from flask_login import LoginManager, logout_user, current_user, login_user, login_required
-# from flask_wtf import CsrfProtect
-from werkzeug.urls import url_parse
 import sqlite3
 import json
-
 import forms
 import models
-
+from flask import Flask, render_template, request, make_response, session, flash, g, url_for, redirect
+from flask_login import LoginManager, logout_user, current_user, login_user, login_required
+from werkzeug.urls import url_parse
 from models import *
+# from flask_wtf import CsrfProtect
 
 app = Flask(__name__)
 
@@ -52,13 +50,15 @@ def index():
     # DB values for represent the charts with Chart.js.
     #############################################################################
     valuesOkNok = []
-    conn = sqlite3.connect('static/BD/esp32.db')
+    # conn = sqlite3.connect('static/BD/esp32.db')
+    conn = sqlite3.connect('static/BD/4246_IOT.db')
     c = conn.cursor()
-    c.execute("SELECT SUM(OK), SUM(NOK) FROM esp32_table");
-
+    c.execute("SELECT SUM(OK) FROM table_plc");
     rows = c.fetchmany()
-    valuesOkNok.append(rows[0][0])
-    valuesOkNok.append(rows[0][1])
+    valuesOkNok.append(rows[0])
+    c.execute("SELECT SUM(NOK) FROM table_plc");
+    rows = c.fetchmany()
+    valuesOkNok.append(rows[0])
 
     # TODO
     ##############################

@@ -28,6 +28,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap" rel="stylesheet">
 
+    <!-- Reload page each x time. -->
+    <!-- <meta http-equiv="refresh" content="10"> -->
+
     <title>!ngiottest</title>
 
   </head>
@@ -263,6 +266,14 @@
       chartMachinesStatus({{ valuesMachines | tojson | safe }});
       chart4plot({{ values4char | tojson | safe}});
     </script>
+
+    <!-- Script that update each x seconds the web page.
+    <script>
+      setTimeout(function() {
+        window.location.reload(1);
+      }, 10000);
+    </script>
+    -->
 
   </body>
 
