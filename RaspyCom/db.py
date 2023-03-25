@@ -24,7 +24,7 @@ class db():
            connection.commit()
            result = cursor.fetchone()[0]
         except:
-            print("Error writing to DB.")
+            print("Error writing to DB: ", query)
             result = -1
         return result if result != None else -1
 
