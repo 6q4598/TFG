@@ -1,4 +1,135 @@
-/* PLOT 1 *************************************************************************************/
+/***********************************
+ * OEE CHART                       *
+ ***********************************/
+const ctx_oee = document.getElementById('myChart');
+const background_color = ['#33a3ec', '#ffce55', '#4ac1c1', '#ff00ff00'];
+
+var chart_oee = new Chart(ctx_oee, {
+    type: 'doughnut',
+    data: {
+        labels: ['Availability', 'Performance', 'Quality'],
+        datasets: [{
+            data: [0, 0, 0],
+            backgroundColor: background_color,
+            borderWidth: 10,
+            borderColor: "#fbfbfb"
+        }]
+    },
+    options: {
+        scales: {
+            display: false
+        },
+        animation: {
+            duration: 1000,
+            animateRotate: true,
+            render: false
+        },
+        plugins: {
+            title: {
+                display: true,
+                text: "Current shift OEE"
+            },
+            legend: {
+                display: true,
+                position: 'bottom'
+            }
+        }
+    },
+    /*
+    plugins: [ChartDataLabels],
+    options: {
+        plugins: {
+            datalabels: {
+                color: ['black', 'black', 'black', 'white'],
+                font: { weight: 'bold', size: '14px' }
+            }
+        }
+    }
+    */
+});
+
+// Función para actualizar el gráfico con los valores de los sensores
+function actualizarGraficoOee() {
+    $.get('/oee', function(data) {
+        chart_oee.data.datasets[0].data[0] = data.availability;
+        chart_oee.data.datasets[0].data[1] = data.performance;
+        chart_oee.data.datasets[0].data[2] = data.quality;
+        chart_oee.update();
+    });
+}
+
+// Actualizar el gráfico cada 5 segundos
+setInterval(actualizarGraficoOee, 5000);
+
+/***********************************
+ * PIECES CHART                    *
+ ***********************************/
+// Crear el gráfico de barras
+var ctx_pieces = document.getElementById('myChart2').getContext('2d');
+const background_color2 = ['#33a3ec', '#ff6384'];
+var chart_pieces = new Chart(ctx_pieces, {
+    type: 'doughnut',
+    data: {
+        labels: ['OK', 'NOK'],
+        datasets: [{
+            data: [0, 0],
+            backgroundColor: background_color2,
+            borderWidth: 10,
+            borderColor: "#fbfbfb"
+        }]
+    },
+    options: {
+        scales: {
+            display: false
+        },
+        animation: {
+            duration: 1000,
+            animateRotate: true,
+            render: false
+        },
+        plugins: {
+            title: {
+                display: true,
+                text: "Pieces fabricated"
+            },
+            legend: {
+                display: true,
+                position: 'bottom'
+            }
+        }
+    },
+    /*
+    plugins: [ChartDataLabels],
+    options: {
+        plugins: {
+            datalabels: {
+                color: ['black'],
+                font: { weight: 'bold', size: '14px' }
+            }
+        }
+    }
+    */
+});
+
+// Función para actualizar el gráfico con los valores de los sensores
+function actualizarGraficoPieces() {
+    $.get('/pieces', function(data) {
+        chart_pieces.data.datasets[0].data[1] = data.pieces_nok;
+        chart_pieces.data.datasets[0].data[0] = data.pieces_ok;
+        chart_pieces.update();
+    });
+}
+
+// Actualizar el gráfico cada 5 segundos
+setInterval(actualizarGraficoPieces, 5000);
+
+
+
+
+
+
+
+/*
 function chartOEE(valors) {
 
     const ctx = document.getElementById('myChart');
@@ -46,8 +177,10 @@ function chartOEE(valors) {
         }
     });
 }
+*/
 
 /* PLOT 2 *************************************************************************************/
+/*
 function chartOkNok(valors) {
 
     const ctx2 = document.getElementById('myChart2');
@@ -96,6 +229,7 @@ function chartOkNok(valors) {
     });
 }
 
+*/
 /* PLOT 3 *************************************************************************************/
 function chartMachinesStatus(valors) {
 
@@ -144,6 +278,16 @@ function chartMachinesStatus(valors) {
         }
     });
 }
+// Función para actualizar el gráfico con los valores de los sensores
+function actualizarGrafico() {
+    $.get('/pieces', function(data) {
+        chart_pieces.data.datasets[0].data[0] = data.pieces_ok;
+        chart_pieces.data.datasets[0].data[1] = data.pieces_nok;
+        chart_pieces.update();
+    });
+}
+// Actualizar el gráfico cada 5 segundos
+setInterval(actualizarGrafico, 5000);
 
 /* PLOT 4 *************************************************************************************/
 function chart4plot(valors) {
