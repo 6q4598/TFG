@@ -1,8 +1,11 @@
+// For CHART.JS plugins:
+
 /***********************************
  * OEE CHART                       *
  ***********************************/
 const ctx_oee = document.getElementById('myChart');
 const background_color = ['#33a3ec', '#ffce55', '#4ac1c1', '#ff00ff00'];
+// Chart.register(ChartDataLabels);
 
 var chart_oee = new Chart(ctx_oee, {
     type: 'doughnut',
@@ -49,8 +52,9 @@ var chart_oee = new Chart(ctx_oee, {
 });
 
 // Función para actualizar el gráfico con los valores de los sensores
-function actualizarGraficoOee() {
+function updateChartOee() {
     $.get('/oee', function(data) {
+        console.log(data);
         chart_oee.data.datasets[0].data[0] = data.availability;
         chart_oee.data.datasets[0].data[1] = data.performance;
         chart_oee.data.datasets[0].data[2] = data.quality;
@@ -59,14 +63,15 @@ function actualizarGraficoOee() {
 }
 
 // Actualizar el gráfico cada 5 segundos
-setInterval(actualizarGraficoOee, 5000);
+setInterval(updateChartOee, 5000);
 
 /***********************************
  * PIECES CHART                    *
  ***********************************/
-// Crear el gráfico de barras
 var ctx_pieces = document.getElementById('myChart2').getContext('2d');
 const background_color2 = ['#33a3ec', '#ff6384'];
+// Chart.register(ChartDataLabels);
+
 var chart_pieces = new Chart(ctx_pieces, {
     type: 'doughnut',
     data: {
@@ -112,8 +117,9 @@ var chart_pieces = new Chart(ctx_pieces, {
 });
 
 // Función para actualizar el gráfico con los valores de los sensores
-function actualizarGraficoPieces() {
+function updateChartPieces() {
     $.get('/pieces', function(data) {
+        console.log("Data 2: ", data);
         chart_pieces.data.datasets[0].data[1] = data.pieces_nok;
         chart_pieces.data.datasets[0].data[0] = data.pieces_ok;
         chart_pieces.update();
@@ -121,115 +127,11 @@ function actualizarGraficoPieces() {
 }
 
 // Actualizar el gráfico cada 5 segundos
-setInterval(actualizarGraficoPieces, 5000);
+setInterval(updateChartPieces, 5000);
 
 
 
 
-
-
-
-/*
-function chartOEE(valors) {
-
-    const ctx = document.getElementById('myChart');
-    const background_color = ['#33a3ec', '#ffce55', '#4ac1c1', '#ff00ff00'];
-
-    var myChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Availability', 'Performance', 'Quality'],
-            datasets: [{
-                data: valors,
-                backgroundColor: background_color,
-                borderWidth: 10,
-                borderColor: "#fbfbfb"
-            }]
-        },
-        options: {
-            scales: {
-                display: false
-            },
-            animation: {
-                duration: 1000,
-                animateRotate: true,
-                render: false
-            },
-            plugins: {
-                title: {
-                    display: true,
-                    text: "Pieces fabricated"
-                },
-                legend: {
-                    display: true,
-                    position: 'bottom'
-                }
-            }
-        },
-        plugins: [ChartDataLabels],
-        options: {
-            plugins: {
-                datalabels: {
-                    color: ['black', 'black', 'black', 'white'],
-                    font: { weight: 'bold', size: '14px' }
-                }
-            }
-        }
-    });
-}
-*/
-
-/* PLOT 2 *************************************************************************************/
-/*
-function chartOkNok(valors) {
-
-    const ctx2 = document.getElementById('myChart2');
-    const background_color2 = ['#33a3ec', '#ff6384'];
-
-    new Chart(ctx2, {
-        type: 'doughnut',
-        data: {
-            labels: ['Ok', 'No Ok'],
-            datasets: [{
-                data: valors,
-                backgroundColor: background_color2,
-                borderWidth: 10,
-                borderColor: "#fbfbfb"
-            }]
-        },
-        options: {
-            scales: {
-                display: false
-            },
-            animation: {
-                duration: 1000,
-                animateRotate: true,
-                render: false
-            },
-            plugins: {
-                title: {
-                    display: true,
-                    text: "Pieces fabricated"
-                },
-                legend: {
-                    display: true,
-                    position: 'bottom'
-                }
-            }
-        },
-        plugins: [ChartDataLabels],
-        options: {
-            plugins: {
-                datalabels: {
-                    color: 'black',
-                    font: { weight: 'bold', size: '14px' }
-                }
-            }
-        }
-    });
-}
-
-*/
 /* PLOT 3 *************************************************************************************/
 function chartMachinesStatus(valors) {
 
@@ -278,16 +180,6 @@ function chartMachinesStatus(valors) {
         }
     });
 }
-// Función para actualizar el gráfico con los valores de los sensores
-function actualizarGrafico() {
-    $.get('/pieces', function(data) {
-        chart_pieces.data.datasets[0].data[0] = data.pieces_ok;
-        chart_pieces.data.datasets[0].data[1] = data.pieces_nok;
-        chart_pieces.update();
-    });
-}
-// Actualizar el gráfico cada 5 segundos
-setInterval(actualizarGrafico, 5000);
 
 /* PLOT 4 *************************************************************************************/
 function chart4plot(valors) {
