@@ -1,0 +1,29 @@
+Pieces OK: 6     Pieces NOK: 0
+Start hour: 14:00:00    End hour: 22:00:00
+Pieces OK: 6     Pieces NOK: 0
+Start hour: 14:00:00    End hour: 22:00:00
+Pieces OK: 6     Pieces NOK: 0
+Start hour: 14:00:00    End hour: 22:00:00
+Pieces OK: 6     Pieces NOK: 0
+Start hour: 22:00:00    End hour: 06:00:00
+Exception in thread Thread-2:
+Traceback (most recent call last):
+  File "/usr/lib/python3.9/threading.py", line 954, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.9/threading.py", line 1266, in run
+    self.function(*self.args, **self.kwargs)
+  File "/home/pi/Documents/TFG/RaspyCom/main.py", line 238, in write_sql
+    write_oee_values(sql_connection, sql_cursor, current_oee, now_error)
+  File "/home/pi/Documents/TFG/RaspyCom/main.py", line 176, in write_oee_values
+    object_oee.get_oee(), object_oee.get_availability(), object_oee.get_performance(), object_oee.get_quality())
+  File "/home/pi/Documents/TFG/RaspyCom/oee.py", line 203, in get_oee
+    return (100 * self.get_availability()/100 * self.get_performance()/100 * self.get_quality()/100)
+  File "/home/pi/Documents/TFG/RaspyCom/oee.py", line 215, in get_availability
+    breaked = self.planned_stops_time()
+TypeError: 'int' object is not callable
+^CException ignored in: <module 'threading' from '/usr/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/usr/lib/python3.9/threading.py", line 1428, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+

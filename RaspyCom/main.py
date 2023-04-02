@@ -12,29 +12,74 @@ from datetime import datetime
 from snap7 import util
 from threading import *
 
-# Dictionary where to save the values readed from the PLC.
-db_values = {'Auto': 0, 'Man': 0, 'Audit': 0, 'Error': 0, 'Maintenance': 0, 'Ok': 0, 'Nok': 0, 'ErrorCodes': ''}
+# Constants.
+# -----------------------------------------------------------------------------------------------------------
+DB_SLEEP = 60
+PLC_SLEEP = 0.030
+CYCLE_TIME = 10
+# -----------------------------------------------------------------------------------------------------------
 
 # Global variables to set the cycle time, threads sleeps, create flags and saved number created pieces.
+# -----------------------------------------------------------------------------------------------------------
 # TODO: treure les variables globals i encapsular-les en una clase.
-# -------------------------------------
 plc_connected = False
 num_ok = num_nok = 0
 fabricated_ok = fabricated_nok = False
-# -------------------------------------
-
-# Constants.
-Db_sleep = 60
-Plc_sleep = 0.030
-Cycle_time = 10
+# Dictionary where to save the values readed from the PLC.
+db_values = {'Auto': 0, 'Man': 0, 'Audit': 0, 'Error': 0, 'Maintenance': 0, 'Ok': 0, 'Nok': 0, 'ErrorCodes': ''}
+trheads_list = []
+# -----------------------------------------------------------------------------------------------------------
 
 # SQLite3 PATH and creation table strings.
+# -----------------------------------------------------------------------------------------------------------
 # TODO: Això se'n va a la clase db.
 # sql_path = "/media/rpiiot/CCCOMA_X64F/4246_IOT.db"
-sql_path = "/media/rpiiot/01A8-D2D2/4246_IOT.db"
-create_table_plc = "CREATE TABLE table_plc (Date TIME, Hour TIME, Auto INTEGER, Manual INTEGER, Audit INTEGER, Error INTEGER, Maintenance INTGER, Ok INTEGER, NOk INTEGER, Error_codes TEXT, PRIMARY KEY (Date, Hour))"
-create_table_shifts = "CREATE TABLE table_shifts (Id INTEGER, Days STRING, Start_time TIME, End_time TIME, Break_time INTEGER, PRIMARY KEY (id))"
-create_table_oee = "CREATE TABLE table_oee (Date TIME, Hour TIME, Oee REAL, Availability REAL, Performance REAL, Quality REAL, PRIMARY KEY (Date, Hour))"
+sql_path = "/media/pi/USB DISK/4246_IOT.db"
+create_table_plc = """
+    CREATE TABLE table_plc (
+        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+        Date TIME,
+        Hour TIME,
+        Auto INTEGER,
+        Manual INTEGER,
+        Audit INTEGER,
+        Error INTEGER,
+        Maintenance INTGER,
+        Ok INTEGER,
+        Nok INTEGER,
+        Error_codes TEXT,
+        Break BOOL DEFAULT FALSE
+    )"""
+create_table_shifts = """
+    CREATE TABLE table_shifts (
+        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+        Days STRING,
+        Start_time TIME,
+        End_time TIME,
+        Break_time TIME,
+        Break_duration INTEGER,
+        Maintenance_time TIME,
+        Maintenance_duration TIME
+    )"""
+create_table_oee = """
+    CREATE TABLE table_oee (
+        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+        Date TIME,
+        Hour TIME,
+        Oee REAL,
+        Availability REAL,
+        Performance REAL,
+        Quality REAL,
+        Ok INTEGER,
+        Nok INTEGER,
+        Teorical_production INTEGER,
+        Work_time REAL,
+        Break_time REAL,
+        Rest_time REAL,
+        Maintenance_time REAL,
+        Error_time REAL
+    )"""
+# -----------------------------------------------------------------------------------------------------------
 
 """
 ---------------------------------------
@@ -79,17 +124,6 @@ def write_values_sql(sql_connection, sql_cursor, sql_query):
     except sqlite3.OperationalError as e:
         print("Error to write the PLC values to the database. Error: ", e)
 
-def create_tables(sql_cursor):
-    """
-    Create a database if not exists.
-    """
-    try:
-        sql_cursor.execute(create_table_plc)
-        sql_cursor.execute(create_table_shifts)
-        sql_cursor.execute(create_table_oee)
-    except:
-        print("Creating tables error. Error: ", e)
-
 def write_plc_values(sql_connection, sql_cursor):
     """
     PLC VALUES WRITING DB.
@@ -98,13 +132,12 @@ def write_plc_values(sql_connection, sql_cursor):
     """
     global num_ok, num_nok
 
-    # WARNING: python position memory when «=».!!!
     db_values_temp = {'Auto': db_values['Auto'], 'Man': db_values['Man'], 'Audit': db_values['Audit'],
                       'Error': db_values['Error'], 'Maintenance': db_values['Maintenance'],
                       'Ok': db_values['Ok'], 'Nok': db_values['Nok'], 'ErrorCodes': db_values['ErrorCodes']}
     num_ok_temp = num_ok
     num_nok_temp = num_nok
-    print("Pieces OK: {}\t Pieces NOK: {}", num_ok, num_nok)
+    print("Pieces OK: {}\t Pieces NOK: {}".format( num_ok, num_nok))
 
     db_values.update({'Auto' : 0, 'Man' : 0, 'Audit' : 0, 'Error' : 0, 'Maintenance': 0, 'Ok' : 0, 'Nok' : 0, 'ErrorCodes' : '' })
     num_ok = 0
@@ -118,25 +151,42 @@ def write_plc_values(sql_connection, sql_cursor):
         db_values_temp['Maintenance'], num_ok_temp, num_nok_temp) # TODO: db_values_temp['Error'])
     write_values_sql(sql_connection, sql_cursor, sql_query_plc)
 
-def write_oee_values(sql_connection, sql_cursor, object_oee, f_maintenance, f_error):
+def write_oee_values(sql_connection, sql_cursor, object_oee, now_error):
     """
     OEE VALUES WRITING DB.
     Write the OEE calculated values to the «table_oee» database table.
     If the current time not in range of shift, the shift has changed. Reset OEE values and get new range for new shift.
     """
     current_hour = datetime.today().strftime("%H:%M:%S")
+
     if ((object_oee.start_shift_time and object_oee.end_shift_time) == None and
             (current_hour < object_oee.start_shift_time) or (current_hour >= object_oee.end_shift_time)):
         object_oee.reset_values()
         object_oee.get_start_shift_time()
         object_oee.get_end_shift_time()
-        object_oee.get_break_shift_time()
+        object_oee.get_break_time()
+        object_oee.get_break_duration()
+        object_oee.get_maintenance_time()
+        object_oee.get_break_duration()
 
     print("Start hour: {}\tEnd hour: {}".format(object_oee.start_shift_time, object_oee.end_shift_time))
+    object_oee.get_error(now_error)
     sql_query_oee = "INSERT INTO table_oee (Date, Hour, Oee, Availability, Performance, Quality) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
         datetime.today().strftime("%D"), datetime.today().strftime("%H:%M:%S"),
         object_oee.get_oee(), object_oee.get_availability(), object_oee.get_performance(), object_oee.get_quality())
     write_values_sql(sql_connection, sql_cursor, sql_query_oee)
+
+def create_tables(sql_cursor):
+    """
+    Create a database if not exists.
+    """
+    try:
+        sql_cursor.execute(create_table_plc)
+        sql_cursor.execute(create_table_shifts)
+        sql_cursor.execute(create_table_oee)
+        print("Database created.")
+    except sqlite3.OperationalError as e:
+        print("Creating tables error. Error: ", e)
 
 """
 ---------------------------------------
@@ -148,7 +198,8 @@ def write_sql():
     Write the values readed from PLC and saves it in the dictionary «db_values» in the database.
     Write in the database the values readed from PLC and saved in the dictionary «db_values». Then, reset «db_values» values.
     """
-    global num_ok, num_nok, plc_connected
+    global num_ok, num_nok, plc_connected, trheads_list
+    flag = False
 
     # Start DB connection. If the database not exists, create tables.
     if (os.path.exists(sql_path)):
@@ -156,26 +207,36 @@ def write_sql():
         sql_connection = sqlite3.connect(sql_path)
         sql_cursor = sql_connection.cursor()
     else:
-        print("Creating database.")
-        sql_connection = sqlite3.connect(sql_path)
-        sql_cursor = sql_connection.cursor()
-        create_tables(sql_cursor)
-        print("Database created.")
-
-    # Create OEE class instance.
-    current_oee = oee(Db_sleep, Cycle_time, sql_connection, sql_cursor)
-    current_oee.get_start_shift_time()
-    current_oee.get_end_shift_time()
-    current_oee.get_break_shift_time()
+        try:
+            print("Creating database.")
+            sql_connection = sqlite3.connect(sql_path)
+            sql_cursor = sql_connection.cursor()
+            create_tables(sql_cursor)
+        except sqlite3.OperationalError as e:
+            print("Error connecting database. Error: {}\nStopping program.".format(e))
 
     while True:
         if (plc_connected):
+
+            now_error = db_values['Error']
+
             # Insert PLC and OEE values in the database.
-            f_maintenance = db_values['Maintenance']
-            f_error = db_values['Error']
             write_plc_values(sql_connection, sql_cursor)
-            write_oee_values(sql_connection, sql_cursor, current_oee, f_maintenance, f_error)
-        time.sleep(Db_sleep)
+
+            if (flag == False):
+                # Create OEE class instance.
+                flag = True
+                current_oee = oee(DB_SLEEP, CYCLE_TIME, sql_connection, sql_cursor)
+                current_oee.get_start_shift_time()
+                current_oee.get_end_shift_time()
+                current_oee.get_break_time()
+                current_oee.get_break_duration()
+                current_oee.get_maintenance_time()
+                current_oee.get_maintenance_duration()
+                current_oee.get_maintenance_duration()
+
+            write_oee_values(sql_connection, sql_cursor, current_oee, now_error)
+            time.sleep(DB_SLEEP)
 
 def read_plc():
     """
@@ -184,7 +245,6 @@ def read_plc():
     global plc_connected, num_ok, num_nok, fabricated_ok, fabricated_nok
 
     while True:
-
         client = snap7.client.Client()
 
         try:
@@ -210,7 +270,7 @@ def read_plc():
             continue
 
         # Set a runtime delay.
-        time.sleep(Plc_sleep)
+        time.sleep(PLC_SLEEP)
 
 """
 ---------------------------------------
@@ -228,6 +288,8 @@ def main():
     # Create and start threats.
     read_plc_thread = Thread(target = read_plc)
     write_sql_thread = Timer(10, function = write_sql)
+    trheads_list.append(read_plc_thread)
+    trheads_list.append(write_sql_thread)
     read_plc_thread.start()
     write_sql_thread.start()
 
