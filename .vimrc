@@ -1,8 +1,9 @@
-set relativenumber
+" set relativenumber
+set relativenumber!
 set number
-:colorscheme desert
+colorscheme desert
 
-call plug#begin('C:\Users\farrufi\vimfiles\plugged')
+call plug#begin()
 Plug 'preservim/nerdtree'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'sheerun/vim-polyglot'
@@ -10,6 +11,7 @@ Plug 'arcticicestudio/nord-vim'
 " Plug 'ycm-core/YouCompleteMe'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'ryanoasis/vim-devicons'
 call plug#end()
 
 " Set Python 3 as default language when programing in Python.
@@ -29,3 +31,10 @@ autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTa
 set ruler
 let g:airline_theme = 'ayu_mirage'
 let g:airline_powerline_fonts = 1
+
+" Automatic tonggle between line number modes.
+:augroup numbertoggle
+:  autocmd!
+:  autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
+:  autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
+:augroup END
