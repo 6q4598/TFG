@@ -1,0 +1,12 @@
+Establir direcció IP fixa per a Ethernet. Objectiu: connectar-nos a PLC extern a travès de Ethernet.
+(veure correu, escriure comandes aquí)
+
+---
+Establir prioritats.
+Pot ser que en conectar la Raspberry PI al PLC a través d'Ethernet, aquest
+solapi el WiFi. Per arreglar-ho:
+
+$ ip r
+$ sudo ip r replace default IP_GATEWAY dev eth0/wlan0 metric 100
+
+La metric 100 és un número. Com més baix és, més prioritat dona.

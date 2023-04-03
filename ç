@@ -27,7 +27,6 @@ class oee():
         self.sql_cursor = sql_cursor
         self.interval_duration = interval_duration
         self.cycle_time = cycle_time
-
         self.start_shift_time = '00:00:00'
         self.end_shift_time = '00:00:00'
         self.break_time = '00:00:00'
@@ -35,14 +34,11 @@ class oee():
         self.maintenance_time = '00:00:00'
         self.maintenance_duration = 0
 
-        self.availability = 0
-        self.performance = 0
-        self.quality = 0
 
-        self.current_maintenance = 0
-        self.current_work_time = 0
-        self.current_planned_stop_time = 0
-        self.current_error = 0
+
+        self.current_performance = 0
+        self.current_planned_stop = 0
+        self.current_error = 0 
 
     def set_interval_duration(self, interval_duration):
         """
@@ -64,15 +60,9 @@ class oee():
         self.end_shift_time = '00:00:00'
         self.break_time = '00:00:00'
         self.break_duration = 0
-        self.maintenance_time = 0
-        self.maintenance_duration = 0
         # ---------------------------------
-        self.availability = 0
-        self.performance = 0
-        self.quality = 0
-        # ---------------------------------
-        self.current_work_time = 0
-        self.current_planned_stop_time= 0
+        self.current_performance = 0
+        self.current_planned_stop= 0
 
     def close_connection(self):
         """
@@ -114,7 +104,7 @@ class oee():
             time.strftime("%A"), self.start_shift_time)
         object_db = db()
         result = object_db.write_to_db(self.sql_connection, self.sql_cursor, sql_query)
-        self.break_time = result # if result != -1 else "None"
+        self.break_time = result
         return self.break_time
 
     def get_break_duration(self):
@@ -127,7 +117,7 @@ class oee():
             time.strftime("%A"), self.start_shift_time)
         object_db = db()
         result =  object_db.write_to_db(self.sql_connection, self.sql_cursor, sql_query)
-        self.break_duration = result #  if result >= 0 or result != None else 0
+        self.break_duration = result if result >= 0 or result != None else 0
         return self.break_time
 
     def get_maintenance_time(self):
@@ -138,7 +128,7 @@ class oee():
             time.strftime("%A"), self.start_shift_time)
         object_db = db()
         result = object_db.write_to_db(self.sql_connection, self.sql_cursor, sql_query)
-        self.maintenance_time = result # if result != -1 else "None"
+        self.maintenance_time = result
         return self.maintenance_time
 
     def get_maintenance_duration(self):
@@ -151,7 +141,7 @@ class oee():
             time.strftime("%A"), self.start_shift_time)
         object_db = db()
         result =  object_db.write_to_db(self.sql_connection, self.sql_cursor, sql_query)
-        self.maintenance_duration = result # if result >= 0 or result != None else 0
+        self.maintenance_duration= result if result >= 0 or result != None else 0
         return self.maintenance_duration
 
     def get_start_shift_time(self):
@@ -210,7 +200,7 @@ class oee():
         Get the Overall Equipment Efectiveness since shift started.
         OEE is the product of «Availability», «Performance» and «Quality».
         """
-        return (100 * self.availability/100 * self.performance/100 * self.quality/100)
+        return (100 * self.get_availability()/100 * self.get_performance()/100 * self.get_quality()/100)
 
     """
     ---------------------------------------
@@ -224,16 +214,7 @@ class oee():
         worked = self.work_time()
         breaked = self.planned_stops_time()
         error = self.error_time()
-        self.availability = round((100 * (worked - breaked - error) / (worked - breaked)), 2)
-        return self.availability
-
-    def work_time(self):
-        """
-        Get the total work time since current shift has started.
-        """
-        current_time = datetime.now().strftime("%H:%M:%S")
-        self.current_work_time = ((datetime.strptime(current_time, '%H:%M:%S') - datetime.strptime(self.start_shift_time, "%H:%M:%S")).seconds)
-        return self.current_work_time
+        return round((100 * (worked - breaked - error) / (worked - breaked)), 2)
 
     def planned_stops_time(self):
         """
@@ -242,39 +223,37 @@ class oee():
         (num_iteration * break_time_interval) + (num_maintenance * interval_duration)
         """
         current_time = datetime.now().strftime("%H:%M:%S")
-        print("----------------------------")
-        print("| Break time: {}\n| Break duration: {}\n| Maintenance time: {}\n| Maintenance duration: {}".format(
+        print("Break time: {}\nBreak duration: {}\nMaintenance time: {}\nMaintenance duration: {}".format
               self.break_time,
               self.break_duration,
               self.maintenance_time,
-              self.maintenance_duration))
-        print("----------------------------")
+              self.maintenance_duration)
 
         # We consider whether the planned stops coincide in time with the planned maitenance.
-        if ((self.break_time != -1) and (current_time >= self.break_time) and (self.break_duration > -1) and
-                (self.maintenance_time != -1) and (current_time >= self.maintenance_time) and (self.maintenance_duration > -1)):
+        if ((self.break_time != None) and (current_time >= self.break_time) and (self.break_duration >= 0) and
+                (self.maintenance_time != None) and (self.maintenance_time > -1 and current_time >= self.maintenance_time) and (self.maintenance_duration >= 0)):
             self.update_break_true()
-            self.current_planned_stop_time += self.interval_duration;
+            self.current_planned_stop += self.interval_duration;
             self.maintenance_duration -= 1
             self.break_duration -= 1
             self.current_maintenance = 1
 
-        elif (self.break_time != -1 and current_time >= self.break_time and self.break_duration > -1):
+        elif (self.break_time != None and current_time >= self.break_time and self.break_duration >= 0):
             self.update_break_true()
-            self.current_planned_stop_time += self.interval_duration;
+            self.current_planned_stop += self.interval_duration;
             self.break_duration -= 1
             self.current_maintenance = 1
 
-        elif (self.maintenance_time != -1 and current_time >= self.maintenance_time and self.maintenance_duration > -1):
+        elif (self.maintenance_time != None and current_time >= self.maintenance_time and self.maintenance_duration >= 0):
             self.update_break_true()
-            self.current_planned_stop_time += self.interval_duration;
+            self.current_planned_stop += self.interval_duration;
             self.maintenance_duration -= 1
             self.current_maintenance = 1
 
         else:
             self.current_maintenance = 0
 
-        return self.current_planned_stop_time;
+        return self.current_planned_stop;
 
     def update_break_true(self):
         """
@@ -328,37 +307,9 @@ class oee():
         """
         if (self.current_error == 0 and self.current_maintenance == 0):
             current_time = datetime.now().strftime("%H:%M:%S")
-            try:
-                self.performance = round((100 *
-                                          self.total_pieces_fabricated_in_work_time() /
-                                          ((self.current_work_time - self.current_planned_stop_time) / self.cycle_time)), 2)
-            except Exception as e:
-                None
-        return self.performance
-
-    def total_pieces_fabricated_in_work_time(self):
-        """
-        Select in «table_plc» of the database the total pieces fabricted (OK + NOK)
-        where no is breaked or error.
-        The night shift has extended for 2 days (22:00 to 06:00), so it must be calculated differently.
-        """
-        current_time = datetime.now().strftime("%H:%M:%S")
-
-        # Select all pieces fabricated for current shift.
-        if (current_time >= '06:00:00' and current_time < '22:00:00'):
-            sql_query = "SELECT SUM(OK + NOK) FROM table_plc WHERE Error = 0 AND Break = 0 AND Date = '{}' AND Hour >= '{}' AND Hour < '{}'".format(
-                time.strftime("%D"), self.start_shift_time, self.end_shift_time)
-        # If the current time is >= 22:00, the shift is night but the next day hasn't started yet.
-        elif (current_time >= "22:00:00"):
-            sql_query = "SELECT SUM(OK + NOK) FROM table_plc WHERE Error = 0 AND Break = 0 AND Date = '{}' AND Hour >= '{}'".format(
-                time.strftime("%D"), self.start_shift_time)
-        else:
-            sql_query = "SELECT SUM(OK + NOK) FROM table_plc WHERE (Error = 0 AND Break = 0) AND ((Date = '{}' AND Hour >= '{}') OR (Date = '{}' AND Hour < '{}'))".format(
-                (datetime.today() - timedelta(days = 1)).strftime("%D"), self.start_shift_time,
-                time.strftime("%D"), self.end_shift_time)
-
-        object_db = db()
-        return object_db.write_to_db(self.sql_connection, self.sql_cursor, sql_query)
+            if (((self.cycle_time * self.work_time()) > 0) or (self.break_duration < 0) or (self.maintenance_duration < 0)):
+                self.current_performance = round((100 * self.total_pieces_fabricated() / (self.work_time() / self.cycle_time)), 2) if (self.work_time() >= 0) else 0
+        return self.current_performance
 
     """
     ---------------------------------------
@@ -375,8 +326,7 @@ class oee():
             print("No pieces fabricated since current shift started. Number divided by 0 is infinty.")
             return 0
 
-        self.quality = round((100 * self.total_pieces_ok_fabricated() / self.total_pieces_fabricated()), 2)
-        return self.quality
+        return round((100 * self.total_pieces_ok_fabricated() / self.total_pieces_fabricated()), 2)
 
     def total_pieces_ok_fabricated(self):
         """
@@ -403,6 +353,18 @@ class oee():
         object_db = db()
         return object_db.write_to_db(self.sql_connection, self.sql_cursor, sql_query)
 
+    """
+    ---------------------------------------
+    COMMON FUNCTIONS
+    ---------------------------------------
+    """
+    def work_time(self):
+        """
+        Get the total work time since current shift has started.
+        """
+        current_time = datetime.now().strftime("%H:%M:%S")
+        return ((datetime.strptime(current_time, '%H:%M:%S') - datetime.strptime(self.start_shift_time, "%H:%M:%S")).seconds)
+
     def total_pieces_fabricated(self):
         """
         Select from «table_plc» of the database the total pieces fabricted (OK + NOK).
@@ -422,10 +384,9 @@ class oee():
             sql_query = "SELECT SUM(OK + NOK) FROM table_plc WHERE (Date = '{}' AND Hour >= '{}') OR (Date = '{}' AND Hour < '{}')".format(
                 (datetime.today() - timedelta(days = 1)).strftime("%D"), self.start_shift_time,
                 time.strftime("%D"), self.end_shift_time)
+
         object_db = db()
         return object_db.write_to_db(self.sql_connection, self.sql_cursor, sql_query)
-
-
 
 if __name__ == '__main__':
     # Start connection.

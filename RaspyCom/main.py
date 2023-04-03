@@ -233,7 +233,6 @@ def write_sql():
                 current_oee.get_break_duration()
                 current_oee.get_maintenance_time()
                 current_oee.get_maintenance_duration()
-                current_oee.get_maintenance_duration()
 
             write_oee_values(sql_connection, sql_cursor, current_oee, now_error)
             time.sleep(DB_SLEEP)
