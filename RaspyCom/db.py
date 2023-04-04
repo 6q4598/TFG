@@ -24,7 +24,6 @@ class db():
            cursor.execute(query)
            connection.commit()
            result = cursor.fetchone()[0]
-           print(query, ">>  ", type(result))
         except:
             result = -1
         return result if result != None else -1

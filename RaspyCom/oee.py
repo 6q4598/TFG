@@ -243,7 +243,7 @@ class oee():
         """
         current_time = datetime.now().strftime("%H:%M:%S")
         print("----------------------------")
-        print("| Break time: {}\n| Break duration: {}\n| Maintenance time: {}\n| Maintenance duration: {}".format(
+        print("| Break time: {} | Break duration: {} | Maintenance time: {} | Maintenance duration: {}".format(
               self.break_time,
               self.break_duration,
               self.maintenance_time,
