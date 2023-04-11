@@ -170,7 +170,9 @@ def write_oee_values(sql_connection, sql_cursor, object_oee, now_error):
         object_oee.get_break_duration()
 
     print("Start hour: {}\tEnd hour: {}".format(object_oee.start_shift_time, object_oee.end_shift_time))
-    object_oee.get_error(now_error)
+    object_oee.work_time()
+    object_oee.planned_stops_time()
+    object_oee.error_time()
     sql_query_oee = "INSERT INTO table_oee (Date, Hour, Oee, Availability, Performance, Quality) VALUES('{}', '{}', '{}', '{}', '{}', '{}')".format(
         datetime.today().strftime("%D"), datetime.today().strftime("%H:%M:%S"),
         object_oee.get_oee(), object_oee.get_availability(), object_oee.get_performance(), object_oee.get_quality())
@@ -203,7 +205,7 @@ def write_sql():
 
     # Start DB connection. If the database not exists, create tables.
     if (os.path.exists(sql_path)):
-        print("Dabase conected.")
+        print("Database conected.")
         sql_connection = sqlite3.connect(sql_path)
         sql_cursor = sql_connection.cursor()
     else:

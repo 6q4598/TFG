@@ -18,6 +18,9 @@ class db():
     def __init__(self):
         self
 
+    def print_str(self):
+        return "Hello world"
+
     def write_to_db(self, connection, cursor, query):
         result = None
         try:
