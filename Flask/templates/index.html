@@ -151,12 +151,13 @@
             <div class="container">
               <div class="row">
                 <h1 class="font-weight-bold">OEE</h1>
-                <p class="lead text-muted">Overall Equipment Effectiveness</p>
+                <p class="lead text-muted">Shift</p>
+                <!-- <p class="lead text-muted">Overall Equipment Effectiveness</p> -->
               </div>
             </div>
           </section>
 
-          <!-- Information grid -->
+          <!-- Information grid 1 -->
           <section class="bodycontent">
             <div class="container">
               <div class="graphBox">
@@ -169,15 +170,42 @@
                   <canvas id="myChart2"></canvas>
                 </div>
 
-                <!--
-                  TODO
-                  - - - - -
+                <!-- - - - - - 
+                     TODO
+                     - - - - - -->
                 <div class="box">
                   <canvas id="myChart3"></canvas>
                 </div>
-                -->
 
 
+              </div>
+            </div>
+          </section>
+
+          <section class="bodycontent">
+            <div class="container">
+              <div class="row">
+                <h1 class="font-weight-bold">OEE</h1>
+                <p class="lead text-muted">Day</p>
+                <!-- <p class="lead text-muted">Overall Equipment Effectiveness</p> -->
+              </div>
+            </div>
+          </section>
+
+
+          <!-- Information grid 2 -->
+          <section class="bodycontent">
+            <div class="container">
+              <div class="graphBox">
+                <div class="box">
+                  <canvas id="myChart5"></canvas>
+                </div>
+                <div class="box">
+                  <canvas id="myChart6"></canvas>
+                </div>
+                <div class="box">
+                  <canvas id="myChart7"></canvas>
+                </div>
               </div>
             </div>
           </section>
@@ -226,8 +254,6 @@
             <section class="bodycontent">
               <div class="container">
                 <div class="charbox">
-                  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js"></script>
-                  <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js"></script>
                   <canvas id="myChart4" height="300"></canvas>
                 </div>
               </div>
@@ -260,6 +286,7 @@
     <!--
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0-rc.1/chartjs-plugin-datalabels.min.js" integrity="sha512-+UYTD5L/bU1sgAfWA0ELK5RlQ811q8wZIocqI7+K0Lhh8yVdIoAMEs96wJAIbgFvzynPm36ZCXtkydxu1cs27w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+                  <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js"></script>
     -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
@@ -269,7 +296,10 @@
       console.log("hello world");
       updateChartOee();
       updateChartPieces();
-      // chartMachinesStatus({{ valuesMachines | tojson | safe }});
+      chartMachinesStatus({{ valuesMachines | tojson | safe }});
+      chartMachinesStatus1({{ valuesMachines | tojson | safe }});
+      chartMachinesStatus2({{ valuesMachines | tojson | safe }});
+      chartMachinesStatus3({{ valuesMachines | tojson | safe }});
 
       chart4plot({{ values4char | tojson | safe}});
     </script>
