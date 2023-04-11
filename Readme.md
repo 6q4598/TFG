@@ -9,6 +9,9 @@
 
 APUNTS TFG
 ===========
+Repositori del meu treball de fi de grau.
+
+Aquest repositori conté tota la informació, investigació i treball realitzat durant tan llarg viatge.
 
 [![Generic badge](https://img.shields.io/badge/License-Apache2-<COLOR>.svg)](https://github.com/6q4598/TFG/blob/main/LICENSE)
 [![Generic badge](https://img.shields.io/badge/Web-cellerarrufi.com-<COLOR>.svg)](https://www.cellerarrufi.com)
