@@ -39,8 +39,8 @@ class oee():
         self.availability = 0
         self.performance = 0
         self.quality = 0
+        self.oee = 0
         # ---------------------------------
-        self.current_maintenance = 0
         self.current_work_time = 0
         self.current_planned_stop_time = 0
         self.current_error_time = 0
@@ -199,7 +199,10 @@ class oee():
         Get the Overall Equipment Efectiveness since shift started.
         OEE is the product of «Availability», «Performance» and «Quality».
         """
-        return (100 * self.availability/100 * self.performance/100 * self.quality/100)
+        self.oee = (100 * self.availability/100 * self.performance/100 * self.quality/100)
+        if (self.oee < 0): self.oee = 0
+        elif (self.oee > 100): self.oee = 100
+        return self.oee
 
     """
     ---------------------------------------
@@ -210,13 +213,15 @@ class oee():
         """
         Get the «AVAILABILITY» parameter for the OEE calculation.
         """
-        # worked = self.work_time()
-        # breaked = self.planned_stops_time()
-        # error = self.error_time()
         try:
             self.availability = round((100 * (self.current_work_time - self.current_planned_stop_time - self.current_error_time) / (self.current_work_time - self.current_planned_stop_time)), 2)
+
         except ZeroDivisionError:
             self.availability = 0
+
+        if (self.availability < 0): self.availability = 0
+        elif (self.availability > 100): self.availability = 100
+
         return self.availability
 
     def work_time(self):
@@ -236,32 +241,25 @@ class oee():
         current_time = datetime.now().strftime("%H:%M:%S")
 
         # TODO - configure according to the requirements and the shifts of the client.
-        if (current_time >= "22:00.00"):
-            return self.current_planned_stop_time
+        if (current_time < "22:00.00"):
 
-        # We consider whether the planned stops coincide in time with the planned maitenance.
-        if ((self.break_time != -1) and (current_time >= self.break_time) and (self.break_duration > -1) and
-                (self.maintenance_time != -1) and (current_time >= self.maintenance_time) and (self.maintenance_duration > -1)):
-            self.update_break_true()
-            self.current_planned_stop_time += self.interval_duration;
-            self.maintenance_duration -= 1
-            self.break_duration -= 1
-            self.current_maintenance = 1
+            # We consider whether the planned stops coincide in time with the planned maitenance.
+            if ((self.break_time != -1) and (current_time >= self.break_time) and (self.break_duration > -1) and
+                    (self.maintenance_time != -1) and (current_time >= self.maintenance_time) and (self.maintenance_duration > -1)):
+                self.update_break_true()
+                self.current_planned_stop_time += self.interval_duration;
+                self.maintenance_duration -= 1
+                self.break_duration -= 1
 
-        elif (self.break_time != -1 and current_time >= self.break_time and self.break_duration > -1):
-            self.update_break_true()
-            self.current_planned_stop_time += self.interval_duration;
-            self.break_duration -= 1
-            self.current_maintenance = 1
+            elif (self.break_time != -1 and current_time >= self.break_time and self.break_duration > -1):
+                self.update_break_true()
+                self.current_planned_stop_time += self.interval_duration;
+                self.break_duration -= 1
 
-        elif (self.maintenance_time != -1 and current_time >= self.maintenance_time and self.maintenance_duration > -1):
-            self.update_break_true()
-            self.current_planned_stop_time += self.interval_duration;
-            self.maintenance_duration -= 1
-            self.current_maintenance = 1
-
-        else:
-            self.current_maintenance = 0
+            elif (self.maintenance_time != -1 and current_time >= self.maintenance_time and self.maintenance_duration > -1):
+                self.update_break_true()
+                self.current_planned_stop_time += self.interval_duration;
+                self.maintenance_duration -= 1
 
         return self.current_planned_stop_time
 
@@ -327,7 +325,10 @@ class oee():
         except Exception as e:
             None
 
-        return self.performance if self.performance <= 100 else 100
+        if (self.performance < 0): self.performance = 0
+        if (self.performance > 100): self.performance = 100
+
+        return self.performance
 
     def total_pieces_fabricated(self):
         """
@@ -339,12 +340,14 @@ class oee():
 
         # Select all pieces fabricated for current shift.
         if (current_time >= '06:00:00' and current_time < '22:00:00'):
-            sql_query = "SELECT SUM(OK + NOK) FROM table_plc WHERE Error = 0 AND Break = 0 AND Date = '{}' AND Hour >= '{}' AND Hour < '{}'".format(
+            sql_query = "SELECT SUM(OK + NOK) FROM table_plc WHERE (Error = 0 AND Break = 0) AND Date = '{}' AND Hour >= '{}' AND Hour < '{}'".format(
                 time.strftime("%D"), self.start_shift_time, self.end_shift_time)
+
         # If the current time is >= 22:00, the shift is night but the next day hasn't started yet.
         elif (current_time >= "22:00:00"):
-            sql_query = "SELECT SUM(OK + NOK) FROM table_plc WHERE Error = 0 AND Break = 0 AND Date = '{}' AND Hour >= '{}'".format(
+            sql_query = "SELECT SUM(OK + NOK) FROM table_plc WHERE (Error = 0 AND Break = 0) AND Date = '{}' AND Hour >= '{}'".format(
                 time.strftime("%D"), self.start_shift_time)
+
         else:
             sql_query = "SELECT SUM(OK + NOK) FROM table_plc WHERE (Error = 0 AND Break = 0) AND ((Date = '{}' AND Hour >= '{}') OR (Date = '{}' AND Hour < '{}'))".format(
                 (datetime.today() - timedelta(days = 1)).strftime("%D"), self.start_shift_time,
@@ -365,8 +368,13 @@ class oee():
         """
         try:
             self.quality = round((100 * self.total_pieces_ok_fabricated() / self.total_pieces_fabricated()), 2)
+
         except ZeroDivisionError:
             self.quality = 0
+
+        if (self.quality < 0): self.quality = 0
+        if (self.quality > 100): self.quality = 100
+
         return self.quality
 
     def total_pieces_ok_fabricated(self):
@@ -382,10 +390,12 @@ class oee():
         if (current_time >= '06:00:00' and current_time < '22:00:00'):
             sql_query = "SELECT SUM(OK) FROM table_plc WHERE Error = 0 AND Break = 0 AND Date = '{}' AND Hour >= '{}' AND Hour < '{}'".format(
                 time.strftime("%D"), self.start_shift_time, self.end_shift_time)
+
         # If the current time is >= 22:00, the shift is night but the next day hasn't started yet.
         elif (current_time >= "22:00:00"):
             sql_query = "SELECT SUM(OK) FROM table_plc WHERE Error = 0 AND Break = 0 AND Date = '{}' AND Hour >= '{}'".format(
                 time.strftime("%D"), self.start_shift_time)
+
         else:
             sql_query = "SELECT SUM(OK) FROM table_plc WHERE Error = 0 AND Break = 0 AND ((Date = '{}' AND Hour >= '{}') OR (Date = '{}' AND Hour < '{}'))".format(
                 (datetime.today() - timedelta(days = 1)).strftime("%D"), self.start_shift_time,
