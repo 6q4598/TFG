@@ -199,7 +199,7 @@ class oee():
         Get the Overall Equipment Efectiveness since shift started.
         OEE is the product of «Availability», «Performance» and «Quality».
         """
-        self.oee = (100 * self.availability/100 * self.performance/100 * self.quality/100)
+        self.oee = round((100 * self.availability/100 * self.performance/100 * self.quality/100), 2)
         if (self.oee < 0): self.oee = 0
         elif (self.oee > 100): self.oee = 100
         return self.oee
