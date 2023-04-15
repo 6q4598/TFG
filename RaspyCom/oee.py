@@ -199,7 +199,7 @@ class oee():
         Get the Overall Equipment Efectiveness since shift started.
         OEE is the product of «Availability», «Performance» and «Quality».
         """
-        self.oee = round((100 * self.availability/100 * self.performance/100 * self.quality/100), 2)
+        self.oee = round(((self.availability * self.performance * self.quality) / 100000), 2)
         if (self.oee < 0): self.oee = 0
         elif (self.oee > 100): self.oee = 100
         return self.oee
@@ -281,7 +281,7 @@ class oee():
 
     def get_num_error(self):
         """
-        Get the total errors are in the database since current shift has started."
+        Get total errors are in the database since current shift has started."
         """
         current_time = datetime.now().strftime("%H:%M:%S")
 
