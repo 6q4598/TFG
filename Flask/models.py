@@ -23,7 +23,7 @@ class User(UserMixin): # db.Model):
     def set_psw(self, psw):
         self.psw = generate_password_hash(psw)
 
-    def check_psw(slef, psw):
+    def check_psw(self, psw):
         return check_psw_hash(self.psw, psw)
 
     def __repr__(self):

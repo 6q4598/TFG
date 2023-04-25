@@ -312,8 +312,6 @@ class oee():
         The performance parameter is the result of dividing the total pieces fabricated in an interval of time
         by the pieces that theoretically could have been produced in the same time.
         """
-        current_time = datetime.now().strftime("%H:%M:%S")
-
         try:
             self.performance = round((100 *
                                       self.total_pieces_fabricated() /

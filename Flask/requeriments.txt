@@ -49,3 +49,4 @@ Werkzeug==2.1.2
 wheel==0.34.2
 WTForms==2.3.3
 zipp==3.8.0
+mod-wsgi==4.9.4

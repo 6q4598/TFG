@@ -217,12 +217,13 @@
               <div class="container">
                 <div class="row">
                   <h1 class="font-weight-bold">Filter OEE values</h1>
-                  <p class="lead text-muted">Filter OEE values for data or shift</p>
+                  <p class="lead text-muted">Filter OEE values for shift or hour</p>
                 </div>
               </div>
             </section>
 
             <section class="bodycontent" style="text-align:center;">
+              <!-- 
               <div class="container">
                 <div class="graphBoxForm">
                   <div class="box">
@@ -236,6 +237,28 @@
                   <div class="box">
                     <p class="lead text-muted">Select last day:</p>
                     <input type="date" id="lastday" name="lastday">
+                  </div>
+                  <div class="box">
+                    <p class="lead text-muted">Select time: </p>
+                    <input type="time" id="starttime" name="starttime">
+                  </div>
+                </div>
+              </div>
+              -->
+              <div class="container">
+                <div class="graphBoxForm">
+                  <div class="box">
+                    <p class="lead text-muted">Select day:</p>
+                    <input type="date" id="startday" name="startday">
+                  </div>
+                  <div class="box">
+                    <p class="lead text-muted">Select shift:</p>
+                    <select class="selectstyle">
+                      <option selected>Shift</option>
+                      <option value="1">Tomorrow</option>
+                      <option value="2">Late</option>
+                      <option value="3">Night</option>
+                    </select>
                   </div>
                   <div class="box">
                     <p class="lead text-muted">Select time: </p>

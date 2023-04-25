@@ -30,7 +30,7 @@ var chart_oee = new Chart(ctx_oee, {
         plugins: {
             title: {
                 display: true,
-                text: "Current shift OEE"
+                text: "Current shift - OEE"
             },
             legend: {
                 display: true,
@@ -95,7 +95,7 @@ var chart_pieces = new Chart(ctx_pieces, {
         plugins: {
             title: {
                 display: true,
-                text: "Pieces fabricated"
+                text: "Current shift - Pieces fabricated"
             },
             legend: {
                 display: true,
@@ -203,7 +203,7 @@ function chartMachinesStatus(valors) {
         data: {
             labels: ['Auto', 'Break', 'Stopped machine', 'Error'],
             datasets: [{
-                data: valors,
+                data: [910, 82, 88, 22],
                 backgroundColor: background_color3,
                 borderWidth: 10,
                 borderColor: "#fbfbfb"
@@ -221,7 +221,7 @@ function chartMachinesStatus(valors) {
             plugins: {
                 title: {
                     display: true,
-                    text: "Time distribution"
+                    text: "Current shift - Time distribution"
                 },
                 legend: {
                     display: true,
@@ -229,6 +229,7 @@ function chartMachinesStatus(valors) {
                 }
             }
         },
+        /*
         plugins: [ChartDataLabels],
         options: {
             plugins: {
@@ -238,6 +239,7 @@ function chartMachinesStatus(valors) {
                 }
             }
         }
+        */
     });
 }
 
@@ -249,9 +251,9 @@ function chartMachinesStatus3(valors) {
     new Chart(ctx3, {
         type: 'doughnut',
         data: {
-            labels: ['Auto', 'Break', 'Stopped machine', 'Error'],
+            labels: ['Availabiltiy', 'Performance', 'Quality' ],
             datasets: [{
-                data: valors,
+                data: [81, 82, 88],
                 backgroundColor: background_color3,
                 borderWidth: 10,
                 borderColor: "#fbfbfb"
@@ -269,7 +271,7 @@ function chartMachinesStatus3(valors) {
             plugins: {
                 title: {
                     display: true,
-                    text: "Time distribution"
+                    text: "Current day - OEE"
                 },
                 legend: {
                     display: true,
@@ -277,6 +279,7 @@ function chartMachinesStatus3(valors) {
                 }
             }
         },
+        /*
         plugins: [ChartDataLabels],
         options: {
             plugins: {
@@ -286,19 +289,20 @@ function chartMachinesStatus3(valors) {
                 }
             }
         }
+        */
     });
 }
 function chartMachinesStatus2(valors) {
 
     const ctx3 = document.getElementById('myChart6');
-    const background_color3 = ['#33a3ec', '#ffce55', '#4ac1c1', '#ff6384'];
+    const background_color3 = ['#33a3ec', '#ff6384'];
 
     new Chart(ctx3, {
         type: 'doughnut',
         data: {
-            labels: ['Auto', 'Break', 'Stopped machine', 'Error'],
+            labels: ['Ok', 'Nok'],
             datasets: [{
-                data: valors,
+                data: [90, 10],
                 backgroundColor: background_color3,
                 borderWidth: 10,
                 borderColor: "#fbfbfb"
@@ -316,7 +320,7 @@ function chartMachinesStatus2(valors) {
             plugins: {
                 title: {
                     display: true,
-                    text: "Time distribution"
+                    text: "Current day - Pieces fabricated"
                 },
                 legend: {
                     display: true,
@@ -324,6 +328,7 @@ function chartMachinesStatus2(valors) {
                 }
             }
         },
+        /*
         plugins: [ChartDataLabels],
         options: {
             plugins: {
@@ -333,6 +338,7 @@ function chartMachinesStatus2(valors) {
                 }
             }
         }
+        */
     });
 }
 function chartMachinesStatus1(valors) {
@@ -363,7 +369,7 @@ function chartMachinesStatus1(valors) {
             plugins: {
                 title: {
                     display: true,
-                    text: "Time distribution"
+                    text: "Current day - Time distribution"
                 },
                 legend: {
                     display: true,
@@ -371,6 +377,7 @@ function chartMachinesStatus1(valors) {
                 }
             }
         },
+        /*
         plugins: [ChartDataLabels],
         options: {
             plugins: {
@@ -380,6 +387,7 @@ function chartMachinesStatus1(valors) {
                 }
             }
         }
+        */
     });
 }
 
